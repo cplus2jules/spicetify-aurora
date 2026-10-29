@@ -617,6 +617,51 @@ HIDE BACKGROUNDS
 .Root__right-sidebar-peek {
     --background-elevated-base: rgba(255, 255, 255, 0.07);
     --background-elevated-highlight: rgba(255, 255, 255, 0.11);
+    --background-highlight: rgba(255, 255, 255, 0.08);
+    --background-press: rgba(255, 255, 255, 0.04);
+}
+#main-view {
+    --background-elevated-base: rgba(255, 255, 255, 0.06);
+    --background-elevated-highlight: rgba(255, 255, 255, 0.1);
+    --background-highlight: rgba(255, 255, 255, 0.08);
+    --background-press: rgba(255, 255, 255, 0.04);
+}
+[data-testid="action-bar"] {
+    z-index: 1;
+}
+[data-testid="action-bar-row"] [class*="button-primary__inner"].encore-bright-accent-set {
+    background: linear-gradient(180deg, #fff 0%, rgba(232, 232, 240, 0.94) 100%) !important;
+    color: #000 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.25), 0 10px 28px -6px oklch(from var(--BeautifulLyrics-CoverAccent, #fff) 0.78 c h / 0.55);
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+}
+[data-testid="action-bar-row"] button:hover > [class*="button-primary__inner"].encore-bright-accent-set {
+    transform: scale(1.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.35), 0 12px 34px -6px oklch(from var(--BeautifulLyrics-CoverAccent, #fff) 0.8 c h / 0.8);
+}
+[data-testid="action-bar-row"] button:active > [class*="button-primary__inner"].encore-bright-accent-set {
+    transform: scale(0.96);
+}
+#main-view [class*="button-primary__inner"].encore-over-media-set {
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px) saturate(1.3);
+    -webkit-backdrop-filter: blur(12px) saturate(1.3);
+    transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+#main-view button:hover > [class*="button-primary__inner"].encore-over-media-set {
+    background: rgba(255, 255, 255, 0.16) !important;
+    transform: translateY(-1px);
+}
+#main-view button:active > [class*="button-primary__inner"].encore-over-media-set {
+    transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-testid="action-bar-row"] [class*="button-primary__inner"].encore-bright-accent-set,
+    #main-view [class*="button-primary__inner"].encore-over-media-set {
+        transition: none;
+        transform: none !important;
+    }
 }
 
 #global-nav-bar,
@@ -1446,6 +1491,7 @@ section[data-testid="album-page"] .main-entityHeader-title {
     overflow: hidden;
 }
 #Desktop_PanelContainer_Id [data-canvas-surface] {
+    border-radius: 0 !important;
     -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 96%);
     mask-image: linear-gradient(to bottom, #000 50%, transparent 96%);
 }
