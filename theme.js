@@ -10,6 +10,7 @@ class GalaxyTheme {
     this.isDim = false;
     this.defImage = "https://raw.githubusercontent.com/cplus2jules/spicetify-glass/main/assets/default_bg.jpg";
     this.startImage = localStorage.getItem("galaxy:startupBg");
+    this.lyricsAccent = localStorage.getItem("galaxy:lyricsAccent");
     this.notDimPages = ["/playlist/", "/artist/", "/album/", "/folder/", "/collection/tracks"];
     this.bgContainer = null;
     this.bgImage = null;
@@ -31,6 +32,7 @@ class GalaxyTheme {
     });
 
     this.parseOptions();
+    this.applyLyricsAccent();
     this.createBackgroundElements();
     this.setupScrollListeners();
     this.setupDeviceIcons();
@@ -43,6 +45,11 @@ class GalaxyTheme {
 
     // Initial load
     this.onPageChange(Spicetify.Platform.History.location);
+  }
+
+  applyLyricsAccent() {
+    const style = document.documentElement.style;
+    this.lyricsAccent ? style.setProperty("--BeautifulLyrics-Accent", this.lyricsAccent) : style.removeProperty("--BeautifulLyrics-Accent");
   }
 
   parseOptions() {
@@ -474,6 +481,7 @@ class GalaxyTheme {
     const isLiked = pathname === "/collection/tracks";
     this.fontPageUri = isLiked ? "spotify:collection:tracks" : ["playlist", "album", "artist"].includes(type) ? `spotify:${type}:${uid}` : null;
     document.documentElement.classList.toggle("galaxy-liked-page", isLiked);
+    document.documentElement.classList.toggle("galaxy-album-page", type === "album");
     document.documentElement.classList.toggle("galaxy-profile-page", type === "user");
     this.onEntityPage = !this.config.useHomeEverywhere && (["playlist", "album", "artist"].includes(type) || isLiked);
     this.usesTrackImage = !this.config.useHomeEverywhere && type === "lyrics";
@@ -481,7 +489,7 @@ class GalaxyTheme {
     if (this.onEntityPage) {
       this.observeEntityImage(type === "playlist" ? uid : undefined);
       const hasBanner = type === "playlist" && localStorage.getItem("galaxy:playlistBg:" + uid);
-      if (!isLiked && !hasBanner) this.loadHeaderReel(type, uid);
+      if (!isLiked && !hasBanner && type !== "album") this.loadHeaderReel(type, uid);
     } else if (this.usesTrackImage) {
       this.fetchCurrTrackAlbumImage();
       this.setCoverGradient(null);
@@ -805,6 +813,17 @@ class GalaxyTheme {
           <input type="file" accept="image/*" hidden>
         </div>
       </section>
+      <section>
+        <h3>Lyrics colour</h3>
+        <div class="galaxy-bg-modes" role="radiogroup" aria-label="Lyrics colour">
+          <button type="button" role="radio" data-lyrics="song"><span class="galaxy-bg-swatch galaxy-lyrics-swatch--song"></span>Match the song</button>
+          <button type="button" role="radio" data-lyrics="custom"><span class="galaxy-bg-swatch galaxy-lyrics-swatch--custom"></span>Custom colour</button>
+        </div>
+        <label class="galaxy-lyrics-picker">
+          <span>Colour</span>
+          <input type="color" class="galaxy-color-input">
+        </label>
+      </section>
       <section class="galaxy-toggles">
         <h3>Options</h3>
       </section>
@@ -855,6 +874,27 @@ class GalaxyTheme {
       reader.readAsDataURL(file);
     });
 
+    let lyricsAccent = this.lyricsAccent;
+    const lyricsModes = content.querySelectorAll("[data-lyrics]");
+    const lyricsPicker = content.querySelector(".galaxy-lyrics-picker");
+    const colorInput = lyricsPicker.querySelector("input");
+    const customSwatch = content.querySelector(".galaxy-lyrics-swatch--custom");
+    colorInput.value = lyricsAccent || "#c7a6ff";
+    const renderLyrics = () => {
+      lyricsModes.forEach((b) => b.setAttribute("aria-checked", String((b.dataset.lyrics === "custom") === !!lyricsAccent)));
+      lyricsPicker.hidden = !lyricsAccent;
+      customSwatch.style.setProperty("--galaxy-swatch-color", colorInput.value);
+    };
+    lyricsModes.forEach((b) => b.addEventListener("click", () => {
+      lyricsAccent = b.dataset.lyrics === "custom" ? colorInput.value : null;
+      renderLyrics();
+    }));
+    colorInput.addEventListener("input", () => {
+      lyricsAccent = colorInput.value;
+      renderLyrics();
+    });
+    renderLyrics();
+
     const toggles = content.querySelector(".galaxy-toggles");
     const options = [
       ["useCurrentSongAsHome", "Use the playing song's cover as the background"],
@@ -881,6 +921,9 @@ class GalaxyTheme {
         Spicetify.showNotification("That image is too large; use a URL instead");
         return;
       }
+      lyricsAccent ? localStorage.setItem("galaxy:lyricsAccent", lyricsAccent) : localStorage.removeItem("galaxy:lyricsAccent");
+      this.lyricsAccent = lyricsAccent;
+      this.applyLyricsAccent();
       toggles.querySelectorAll("input").forEach((input) => localStorage.setItem(input.dataset.key, input.checked));
       this.parseOptions();
       this.onPageChange(Spicetify.Platform.History.location);
