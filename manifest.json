@@ -1,13 +1,13 @@
 {
-  "name": "Glass",
-  "description": "Glass panels over an animated gradient in your music's colours, Beautiful Lyrics built in with word-by-word glow, a tiled cover reel on playlist headers, per-playlist title fonts and drawn Connect device icons.",
+  "name": "Aurora",
+  "description": "Frosted glass over an animated gradient in your music's colours, Beautiful Lyrics built in with word-by-word glow, a tiled cover reel on playlist headers, per-playlist title fonts and drawn Connect device icons.",
   "preview": "preview.png",
   "readme": "README.md",
   "usercss": "user.css",
   "schemes": "color.ini",
   "include": [
-    "https://raw.githubusercontent.com/cplus2jules/spicetify-glass/main/theme.js",
-    "https://raw.githubusercontent.com/cplus2jules/spicetify-glass/main/beautiful-lyrics.mjs"
+    "https://raw.githubusercontent.com/cplus2jules/spicetify-aurora/main/theme.js",
+    "https://raw.githubusercontent.com/cplus2jules/spicetify-aurora/main/beautiful-lyrics.mjs"
   ],
   "authors": [
     {

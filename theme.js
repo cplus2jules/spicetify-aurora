@@ -8,7 +8,7 @@ class GalaxyTheme {
       showHeaderImage: false,
     };
     this.isDim = false;
-    this.defImage = "https://raw.githubusercontent.com/cplus2jules/spicetify-glass/main/assets/default_bg.jpg";
+    this.defImage = "https://raw.githubusercontent.com/cplus2jules/spicetify-aurora/main/assets/default_bg.jpg";
     this.startImage = localStorage.getItem("galaxy:startupBg");
     this.lyricsAccent = localStorage.getItem("galaxy:lyricsAccent");
     this.notDimPages = ["/playlist/", "/artist/", "/album/", "/folder/", "/collection/tracks"];

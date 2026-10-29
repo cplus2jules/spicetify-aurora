@@ -5,7 +5,7 @@
     const VITE_CLIENT = `${VITE_SERVER}/@vite/client`;
     const TIMESTAMP = Date.now();
 
-    console.log("Glass Dev Loader: Initializing with HMR...");
+    console.log("Aurora Dev Loader: Initializing with HMR...");
 
     // 1. Inject Vite Client for instant HMR
     function injectViteClient() {
@@ -18,9 +18,9 @@
         }
     }
 
-    // 2. Remove production Glass elements if they exist
+    // 2. Remove production Aurora elements if they exist
     function cleanup() {
-        const prodStyle = document.querySelector('link[href*="Glass/user.css"]');
+        const prodStyle = document.querySelector('link[href*="Aurora/user.css"]');
         if (prodStyle) prodStyle.remove();
         
         const existingDevStyle = document.getElementById("galaxy-dev-style");
@@ -38,7 +38,7 @@
         link.type = "text/css";
         link.href = `${USER_CSS}?t=${TIMESTAMP}`;
         document.head.appendChild(link);
-        console.log("Glass Dev Loader: CSS injected with HMR support", link.href);
+        console.log("Aurora Dev Loader: CSS injected with HMR support", link.href);
     }
 
     // 4. Inject JS
@@ -48,7 +48,7 @@
         script.type = "module";
         script.src = `${THEME_JS}?t=${TIMESTAMP}`;
         document.head.appendChild(script);
-        console.log("Glass Dev Loader: JS injected", script.src);
+        console.log("Aurora Dev Loader: JS injected", script.src);
     }
 
     // Execution
@@ -57,5 +57,5 @@
     injectCSS();
     injectJS();
 
-    console.log("Glass Dev Loader: Done. CSS will update instantly. JS requires Cmd+Shift+R.");
+    console.log("Aurora Dev Loader: Done. CSS will update instantly. JS requires Cmd+Shift+R.");
 })();

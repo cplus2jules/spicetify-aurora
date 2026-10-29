@@ -1,7 +1,7 @@
 {
-  "name": "spicetify-glass",
+  "name": "spicetify-aurora",
   "version": "1.0.0",
-  "description": "Glass panels, an animated cover-colour gradient and a tiled cover reel for Spotify",
+  "description": "Frosted glass panels, an animated cover-colour gradient and built-in synced lyrics for Spotify",
   "private": true,
   "scripts": {
     "dev": "vite"

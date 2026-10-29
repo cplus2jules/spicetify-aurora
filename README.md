@@ -1,22 +1,22 @@
-# Glass
+# Aurora
 
 Frosted glass for Spotify 1.3. The whole app floats over your music's colours, every menu and button is glass, and synced lyrics come built in, with words that light up, jump and sparkle as they're sung.
 
 <p align="center">
-  <img src="docs/hero.gif" alt="An album page in Glass: a softly blurred, drifting cover behind the header, a white play button, and the Now Playing panel with lyrics lighting up in the cover's colour" width="100%">
+  <img src="docs/hero.gif" alt="An album page in Aurora: a softly blurred, drifting cover behind the header, a white play button, and the Now Playing panel with lyrics lighting up in the cover's colour" width="100%">
 </p>
 
 ## Highlights
 
 - **Your music's colours everywhere**: an animated gradient follows the song that's playing, or the playlist, album or artist you're viewing
 - **Beautiful Lyrics built in**: word-by-word glow, a note that hops across the line, sparkles, and lines that glide into place
-- **Glass on every surface**: panels, menus, submenus, tooltips, dialogs, buttons and switches share one frosted look
+- **Frosted glass on every surface**: panels, menus, submenus, tooltips, dialogs, buttons and switches share one frosted look
 - **Headers that move**: album covers blur and drift, artist and playlist headers cycle through their covers
 - **Fast**: built and measured on Spotify 1.3 so the effects don't cost smoothness
 
 ## Lyrics that move with the song
 
-Press the Lyrics button and Spotify's lyrics view is replaced by [Beautiful Lyrics](https://github.com/surfbryce/beautiful-lyrics), restyled and extended for Glass.
+Press the Lyrics button and Spotify's lyrics view is replaced by [Beautiful Lyrics](https://github.com/surfbryce/beautiful-lyrics), restyled and extended for Aurora.
 
 <p align="center">
   <img src="docs/lyrics.gif" alt="The lyrics page: the active line glows, each word jumps as it's sung, a small music note hops from word to word leaving sparkles, and the lines glide upward" width="100%">
@@ -28,7 +28,7 @@ Press the Lyrics button and Spotify's lyrics view is replaced by [Beautiful Lyri
 - **The song's colour**: the glow takes its colour from the cover, or from a colour you pick in Theme settings
 - **In the sidebar too**: the Now Playing panel shows the same lyrics in a glass card, and Spotify's own lyrics card is hidden
 
-Spotify only provides timing for whole lines, so Glass estimates when each word is sung from its length.
+Spotify only provides timing for whole lines, so Aurora estimates when each word is sung from its length.
 
 ### Full screen
 
@@ -48,13 +48,13 @@ Menus, submenus, tooltips and the play button all share the frosted look. Hover 
 
 <p align="center">
   <img src="docs/panel.gif" alt="The Now Playing panel with a lyrics card collapses to a slim glass tab, then fades back in" width="48%">
-  <img src="docs/settings-page.png" alt="Spotify's settings page in Glass: clear switches (a light track with a dark knob when on, translucent when off) above a white equalizer curve" width="48%">
+  <img src="docs/settings-page.png" alt="Spotify's settings page in Aurora: clear switches (a light track with a dark knob when on, translucent when off) above a white equalizer curve" width="48%">
 </p>
 
 - **Smooth panel switching**: switching between Now Playing and Listening activity shows one panel at a time, with no overlapping text, and the new panel fades in. Closing Now Playing leaves a slim glass tab instead of a squashed sliver
 - **Switches you can read**: a light track with a dark knob when on, translucent when off
-- **No Spotify green**: the equalizer curve and Glass's own switches are white to match the theme
-- **Glass dialogs**: the Add to playlist and Theme settings dialogs are frosted too
+- **No Spotify green**: the equalizer curve and Aurora's own switches are white to match the theme
+- **Frosted dialogs**: the Add to playlist and Theme settings dialogs are frosted too
 
 ## Headers that move
 
@@ -78,7 +78,7 @@ The sliders button in the top bar opens **Theme settings**:
 - **Lyrics colour**: match the song, or pick any colour
 - **Options**: use the playing song's cover as the background, use the Home background on every page, and blur custom images
 
-Glass also draws its own Connect device icons for Echo, HomePod, Nest, Sonos, iPhone, MacBook, TVs, consoles and more.
+Aurora also draws its own Connect device icons for Echo, HomePod, Nest, Sonos, iPhone, MacBook, TVs, consoles and more.
 
 ## Fast
 
@@ -86,21 +86,23 @@ The effects are tuned so the app stays smooth:
 
 - The lyrics background renders at half resolution and 30 fps. It's heavily blurred, so it looks identical, at a fraction of the GPU cost
 - The hopping note, sparkles, word jumps and line glides run on the compositor, and the sparkles are reused instead of created for every word
-- Glass avoids CSS selectors that slow down every style update, so panel switches do about half the work they used to
+- Aurora avoids CSS selectors that slow down every style update, so panel switches do about half the work they used to
 - The lyrics page holds 60 fps while the song plays
 
 ## Install
 
 ### Marketplace
 
-Open Marketplace in Spotify, go to **Themes** and install **Glass**. Lyrics are included.
+Open Marketplace in Spotify, go to **Themes** and install **Aurora**. Lyrics are included.
+
+Aurora used to be called Glass. If you installed Glass from Marketplace, install Aurora again to get the built-in lyrics.
 
 ### Manual
 
-Clone this repo into your Spicetify `Themes` folder as `Glass`, then:
+Clone this repo into your Spicetify `Themes` folder as `Aurora`, then:
 
 ```sh
-spicetify config current_theme Glass color_scheme base
+spicetify config current_theme Aurora color_scheme base
 spicetify config inject_css 1 replace_colors 1 overwrite_assets 1 inject_theme_js 1
 spicetify apply
 ```
@@ -114,7 +116,7 @@ spicetify apply
 
 The Spicetify folder is `~/.config/spicetify` on macOS and Linux, and `%appdata%\spicetify` on Windows.
 
-If you also installed the separate Beautiful Lyrics extension from Marketplace, remove it: its servers are offline, and Glass includes a maintained copy.
+If you also installed the separate Beautiful Lyrics extension from Marketplace, remove it: its servers are offline, and Aurora includes a maintained copy.
 
 ## Development
 
