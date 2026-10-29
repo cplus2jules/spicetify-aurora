@@ -488,6 +488,7 @@ class GalaxyTheme {
     this.pageToken++;
     const isLiked = pathname === "/collection/tracks";
     this.fontPageUri = isLiked ? "spotify:collection:tracks" : ["playlist", "album", "artist"].includes(type) ? `spotify:${type}:${uid}` : null;
+    if (!this.fontPageUri) this.setBarFont(null);
     document.documentElement.classList.toggle("galaxy-liked-page", isLiked);
     document.documentElement.classList.toggle("galaxy-album-page", type === "album");
     document.documentElement.classList.toggle("galaxy-profile-page", type === "user");
@@ -697,6 +698,7 @@ class GalaxyTheme {
     const id = localStorage.getItem(`galaxy:titleFont:${this.fontPageUri}`) || "default";
     if (id.startsWith("custom:") && !this.customFontsLoaded) return;
     const font = this.titleFonts().find((f) => f.id === id) || GalaxyTheme.TITLE_FONTS[0];
+    this.setBarFont(font);
     if (header.dataset.galaxyFont === font.id) return;
     header.dataset.galaxyFont = font.id;
     this.loadTitleFont(font);
@@ -710,6 +712,18 @@ class GalaxyTheme {
       header.style.setProperty("--galaxy-title-style", "normal");
       header.style.setProperty("--galaxy-title-weight", "900");
     }
+  }
+
+  // The sticky top bar sits outside the entity header, so its title font lives on the root
+  setBarFont(font) {
+    if (this.barFontId === font?.id) return;
+    this.barFontId = font?.id;
+    const root = document.documentElement;
+    root.classList.toggle("galaxy-bar-font", !!font?.family);
+    if (!font?.family) return;
+    root.style.setProperty("--galaxy-bar-font", `"${font.family}", Georgia, serif`);
+    root.style.setProperty("--galaxy-bar-style", font.style);
+    root.style.setProperty("--galaxy-bar-weight", font.weight);
   }
 
   applyTitleEffect(header) {
