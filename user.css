@@ -539,7 +539,7 @@ HIDE BACKGROUNDS
 -------------------
 */
 /* OVERRIDE NATIVE CSS VARIABLES FOR BACKGROUNDS */
-:root, .Root__main-view, .Root__main-view * {
+:root {
     --background-base: transparent !important;
     --background-noise: none !important;
 }
@@ -548,10 +548,8 @@ HIDE BACKGROUNDS
 .main-entityHeader-overlay,
 .main-entityHeader-backgroundColor,
 .main-entityHeader-shadow,
-[class*="main-actionBarBackground"],
-[class*="main-entityHeader-backgroundColor"],
-[class*="main-actionBar-ActionBar"], /* Target the action bar container itself */
-.main-actionBar-ActionBar,
+.main-actionBar-ActionBar, /* Target the action bar container itself */
+.main-actionBar-ActionBarRow,
 .main-playlistEditDetailsModal-content,
 ._2ajKWDiy6YvJu5wo8I1g {
     background: transparent !important;
@@ -1023,10 +1021,7 @@ section[data-testid="artist-page"] > div[style],
 /* Remove the aggressive separate styling from contentSpacing so we don't double-blur */
 section[data-testid="playlist-page"] .contentSpacing,
 section[data-testid="album-page"] .contentSpacing,
-section[data-testid="artist-page"] .contentSpacing,
-section[data-testid="playlist-page"] [class*="contentSpacing"],
-section[data-testid="album-page"] [class*="contentSpacing"],
-section[data-testid="artist-page"] [class*="contentSpacing"] {
+section[data-testid="artist-page"] .contentSpacing {
     background: transparent !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
@@ -1476,7 +1471,7 @@ section[data-testid="album-page"] .main-entityHeader-title {
     display: none;
 }
 .lyrics-lyricsContainer-LyricsContainer,
-[style*="--lyrics-color-background"] {
+[data-testid="lyrics-npv-section"] {
     --lyrics-color-background: transparent !important;
 }
 .Root__lyrics-cinema {
@@ -1489,6 +1484,21 @@ section[data-testid="album-page"] .main-entityHeader-title {
     border: 1px solid var(--galaxy-glass-border, rgba(255, 255, 255, 0.08));
     border-radius: var(--galaxy-radius, 12px) !important;
     overflow: hidden;
+}
+#Desktop_PanelContainer_Id {
+    animation: galaxy-panel-in 0.24s ease-out;
+}
+@keyframes galaxy-panel-in {
+    from {
+        opacity: 0;
+    }
+}
+.Root__right-sidebar-peekContent {
+    transition: opacity 0.25s ease;
+}
+.Root__right-sidebar-peek:not(.Root__right-sidebar-expanded) .Root__right-sidebar-peekContent {
+    opacity: 0;
+    transition-duration: 0.12s;
 }
 #Desktop_PanelContainer_Id [data-canvas-surface] {
     border-radius: 0 !important;
@@ -1511,6 +1521,29 @@ section[data-testid="album-page"] .main-entityHeader-title {
     line-height: 1.3;
     animation: galaxy-tooltip-in 0.14s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+#context-menu > form {
+    --background-elevated-base: rgba(255, 255, 255, 0.04);
+    --background-highlight: rgba(255, 255, 255, 0.08);
+    --background-press: rgba(255, 255, 255, 0.04);
+    --background-tinted-base: rgba(255, 255, 255, 0.08);
+    --background-tinted-highlight: rgba(255, 255, 255, 0.12);
+    --background-elevated-highlight: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px !important;
+    background: rgba(18, 18, 24, 0.72) !important;
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 24px 48px rgba(0, 0, 0, 0.45) !important;
+    overflow: hidden;
+}
+#context-menu > form input {
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+#context-menu > form input:focus {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
 #context-menu > div:has(> [role="tooltip"]) [role="tooltip"] {
     color: inherit;
     font: inherit;
@@ -1523,7 +1556,8 @@ section[data-testid="album-page"] .main-entityHeader-title {
 }
 @media (prefers-reduced-motion: reduce) {
     .main-contextMenu-tippy,
-    #context-menu > div:has(> [role="tooltip"]) {
+    #context-menu > div:has(> [role="tooltip"]),
+    #Desktop_PanelContainer_Id {
         animation: none;
     }
 }
@@ -1729,11 +1763,6 @@ NEW HOME LAYOUT     // .nav-alt is for prev versions //
 .main-topBar-topBarContainer.Root__fixed-top-bar:nth-last-child(6) {
     grid-template-columns: var(--nav-bar-width) auto 0;
 }
-/* for new v */
-.Root__top-container:not(:has(aside[aria-label="Friend Activity"])) .main-topBar-topBarContainer.Root__fixed-top-bar {
-    grid-template-columns: var(--nav-bar-width) auto 0;
-}
-
 a.zuf9gCpkf86KkzzCtkJN,
 a.main-topBar-navLink {
     background-color: rgba(var(--spice-rgb-shadow), 0.7);
