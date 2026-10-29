@@ -35,6 +35,7 @@ class GalaxyTheme {
     this.applyLyricsAccent();
     this.createBackgroundElements();
     this.setupScrollListeners();
+    this.setupPanelSwitch();
     this.setupDeviceIcons();
     this.setupEditButtons();
     this.setupPlaylistEditObserver();
@@ -754,6 +755,18 @@ class GalaxyTheme {
         requestAnimationFrame(apply);
       }).observe(sidebar, { childList: true, subtree: true });
       apply();
+    });
+  }
+
+  setupPanelSwitch() {
+    this.waitForElement([".Root__right-sidebar-peek"], ([peek]) => {
+      new MutationObserver((mutations) => {
+        for (const { target, addedNodes } of mutations) {
+          if (!addedNodes.length || !target.parentElement?.classList.contains("Root__right-sidebar-peekContent")) continue;
+          const incoming = [...addedNodes];
+          for (const child of target.children) child.toggleAttribute("data-galaxy-leaving", !incoming.includes(child));
+        }
+      }).observe(peek, { childList: true, subtree: true });
     });
   }
 

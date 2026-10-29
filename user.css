@@ -627,6 +627,12 @@ HIDE BACKGROUNDS
 [data-testid="action-bar"] {
     z-index: 1;
 }
+[data-overlayscrollbars-initialize]:has(> [data-overlayscrollbars-viewport] > [data-testid="action-bar"]) {
+    margin-block: -16px;
+}
+[data-testid="action-bar-row"] {
+    padding-block: 16px;
+}
 [data-testid="action-bar-row"] [class*="button-primary__inner"].encore-bright-accent-set {
     background: linear-gradient(180deg, #fff 0%, rgba(232, 232, 240, 0.94) 100%) !important;
     color: #000 !important;
@@ -822,14 +828,14 @@ HIDE BACKGROUNDS
     initial-value: 1;
 }
 
-#main-view [data-overlayscrollbars-viewport] {
+.main-view-container__scroll-node > [data-overlayscrollbars-viewport] {
     --galaxy-top-fade: 1;
     transition: --galaxy-top-fade 0.35s ease;
     -webkit-mask-image: linear-gradient(rgba(0, 0, 0, var(--galaxy-top-fade)) 56px, #000 160px, #000 calc(100% - 48px), transparent);
     mask-image: linear-gradient(rgba(0, 0, 0, var(--galaxy-top-fade)) 56px, #000 160px, #000 calc(100% - 48px), transparent);
 }
-#main-view [data-overlayscrollbars-viewport][fade="top"],
-#main-view [data-overlayscrollbars-viewport][fade="full"] {
+.main-view-container__scroll-node > [data-overlayscrollbars-viewport][fade="top"],
+.main-view-container__scroll-node > [data-overlayscrollbars-viewport][fade="full"] {
     --galaxy-top-fade: 0;
 }
 
@@ -1487,6 +1493,9 @@ section[data-testid="album-page"] .main-entityHeader-title {
 }
 #Desktop_PanelContainer_Id {
     animation: galaxy-panel-in 0.24s ease-out;
+}
+.Root__right-sidebar-peekContent [data-galaxy-leaving] {
+    visibility: hidden !important;
 }
 @keyframes galaxy-panel-in {
     from {
