@@ -312,6 +312,83 @@ footer.main-nowPlayingBar-container {
 .playback-progressbar-isInteractive .DuvrswZugGajIFNXObAr .progress-bar__slider {
     transition: none;
 }
+/* the playhead is a spinning, glowing star */
+[data-testid="playback-progressbar"] .progress-bar {
+    overflow: visible;
+}
+[data-testid="playback-progressbar"] .progress-bar__slider {
+    --galaxy-star-glow: oklch(from var(--BeautifulLyrics-CoverAccent, #fff) 0.86 min(c, 0.16) h);
+    display: block;
+    width: 18px;
+    height: 18px;
+    margin-left: -9px;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+}
+/* the same star on Beautiful Lyrics' fullscreen timeline, sized off its bar like the dot it replaces */
+.BeautifulLyricsPage .Timeline .SliderBar .Handle {
+    --galaxy-star-glow: oklch(from var(--BeautifulLyrics-CoverAccent, #fff) 0.86 min(c, 0.16) h);
+    height: 320cqh !important;
+    background: none !important;
+    border-radius: 0 !important;
+}
+[data-testid="playback-progressbar"] .progress-bar__slider::before,
+[data-testid="playback-progressbar"] .progress-bar__slider::after,
+.BeautifulLyricsPage .Timeline .Handle::before,
+.BeautifulLyricsPage .Timeline .Handle::after {
+    content: "";
+    position: absolute;
+}
+[data-testid="playback-progressbar"] .progress-bar__slider::before,
+.BeautifulLyricsPage .Timeline .Handle::before {
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 5.9 6.5.95-4.7 4.58 1.1 6.47L12 17.35l-5.8 3.05 1.1-6.47-4.7-4.58 6.5-.95z' fill='white' stroke='white' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px var(--galaxy-star-glow));
+    animation: galaxy-star-spin 4s linear infinite;
+    transition: scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+[data-testid="playback-progressbar"] .progress-bar__slider::after,
+.BeautifulLyricsPage .Timeline .Handle::after {
+    inset: -50%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--galaxy-star-glow) 0%, transparent 65%);
+    animation: galaxy-star-pulse 2.4s ease-in-out infinite alternate;
+}
+[data-testid="playback-progressbar"] .progress-bar:hover .progress-bar__slider::before,
+.BeautifulLyricsPage .Timeline:hover .Handle::before {
+    scale: 1.25;
+}
+html:not(.galaxy-playing) [data-testid="playback-progressbar"] .progress-bar__slider::before,
+html:not(.galaxy-playing) [data-testid="playback-progressbar"] .progress-bar__slider::after,
+html:not(.galaxy-playing) .BeautifulLyricsPage .Timeline .Handle::before,
+html:not(.galaxy-playing) .BeautifulLyricsPage .Timeline .Handle::after {
+    animation-play-state: paused;
+}
+@keyframes galaxy-star-spin {
+    to {
+        rotate: 360deg;
+    }
+}
+@keyframes galaxy-star-pulse {
+    from {
+        opacity: 0.45;
+        scale: 0.8;
+    }
+    to {
+        opacity: 0.9;
+        scale: 1.15;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    [data-testid="playback-progressbar"] .progress-bar__slider::before,
+    [data-testid="playback-progressbar"] .progress-bar__slider::after,
+    .BeautifulLyricsPage .Timeline .Handle::before,
+    .BeautifulLyricsPage .Timeline .Handle::after {
+        animation: none;
+    }
+}
 /* connect bar */
 .main-connectBar-connectBar {
     border-radius: 0;

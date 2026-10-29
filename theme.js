@@ -46,6 +46,10 @@ class GalaxyTheme {
     // Listeners
     Spicetify.Platform.History.listen(this.onPageChange.bind(this));
     Spicetify.Player.addEventListener("songchange", this.onSongChange.bind(this));
+    // Lets CSS pause the playhead star while nothing is playing
+    const syncPlaying = () => document.documentElement.classList.toggle("galaxy-playing", Spicetify.Player.isPlaying());
+    Spicetify.Player.addEventListener("onplaypause", syncPlaying);
+    syncPlaying();
 
     // Initial load
     this.onPageChange(Spicetify.Platform.History.location);
