@@ -705,6 +705,40 @@ HIDE BACKGROUNDS
     padding-inline-end: 0.15em;
 }
 
+.galaxy-fx-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+[data-galaxy-fx] .main-entityHeader-title,
+[data-galaxy-fx] .main-entityHeader-title * {
+    text-shadow: none !important;
+}
+[data-galaxy-fx="ink"] .main-entityHeader-title :is(h1, [data-encore-id="adaptiveTitle"]) {
+    filter: url(#galaxy-fx-ink) drop-shadow(0 2px 14px rgba(0, 0, 0, 0.3));
+}
+[data-galaxy-fx="bleed"] .main-entityHeader-title :is(h1, [data-encore-id="adaptiveTitle"]) {
+    filter: url(#galaxy-fx-bleed) drop-shadow(0 2px 14px rgba(0, 0, 0, 0.3));
+}
+[data-galaxy-fx="halftone"] .main-entityHeader-title :is(h1, [data-encore-id="adaptiveTitle"]) {
+    filter: url(#galaxy-fx-halftone) drop-shadow(0 2px 14px rgba(0, 0, 0, 0.3));
+}
+[data-galaxy-fx="pixel"] .main-entityHeader-title :is(h1, [data-encore-id="adaptiveTitle"]) {
+    filter: url(#galaxy-fx-pixel) drop-shadow(0 2px 14px rgba(0, 0, 0, 0.3));
+}
+[data-galaxy-fx="lines"] .main-entityHeader-title :is(h1, [data-encore-id="adaptiveTitle"]) {
+    -webkit-mask-image: repeating-linear-gradient(#000 0 0.055em, transparent 0 0.1em);
+    mask-image: repeating-linear-gradient(#000 0 0.055em, transparent 0 0.1em);
+}
+[data-galaxy-fx="fill"] .main-entityHeader-title :is(h1, [data-encore-id="adaptiveTitle"]) {
+    background: var(--galaxy-title-fill, none) center / cover var(--galaxy-title-color, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: saturate(1.25) brightness(1.2) drop-shadow(0 0 0.6px rgba(255, 255, 255, 0.75)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35));
+}
+
 .galaxy-font-button {
     position: absolute;
     top: 80px;
@@ -736,8 +770,8 @@ HIDE BACKGROUNDS
 .galaxy-font-menu {
     position: fixed;
     z-index: 1000;
-    width: 300px;
-    max-height: 420px;
+    width: 320px;
+    max-height: 560px;
     overflow-y: auto;
     padding: 6px;
     border-radius: 14px;
@@ -746,7 +780,44 @@ HIDE BACKGROUNDS
     -webkit-backdrop-filter: blur(28px) saturate(1.4);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 18px 40px rgba(0, 0, 0, 0.45);
 }
-.galaxy-font-menu button {
+.galaxy-font-heading {
+    padding: 14px 12px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+.galaxy-font-heading:first-child {
+    padding-top: 6px;
+}
+.galaxy-fx-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px 6px 6px;
+}
+.galaxy-fx-chips button {
+    height: 28px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+.galaxy-fx-chips button:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+.galaxy-fx-chips button[aria-checked="true"] {
+    background: #fff;
+    color: #000;
+}
+.galaxy-font-item,
+.galaxy-font-add {
     display: flex;
     width: 100%;
     align-items: baseline;
@@ -760,11 +831,42 @@ HIDE BACKGROUNDS
     text-align: left;
     cursor: pointer;
 }
-.galaxy-font-menu button:hover {
+.galaxy-font-item:hover,
+.galaxy-font-add:hover {
     background: rgba(255, 255, 255, 0.08);
 }
-.galaxy-font-menu button[aria-checked="true"] {
+.galaxy-font-item[aria-checked="true"] {
     background: rgba(255, 255, 255, 0.14);
+}
+.galaxy-font-custom {
+    position: relative;
+}
+.galaxy-font-custom .galaxy-font-item {
+    padding-right: 40px;
+}
+.galaxy-font-remove {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    translate: 0 -50%;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 16px;
+    line-height: 26px;
+    cursor: pointer;
+}
+.galaxy-font-remove:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+.galaxy-font-add {
+    padding: 10px 12px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
 }
 .galaxy-font-sample {
     overflow: hidden;

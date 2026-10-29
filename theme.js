@@ -17,6 +17,7 @@ class GalaxyTheme {
     this.onEntityPage = false;
     this.pageToken = 0;
     this.reelEl = null;
+    this.customFonts = [];
   }
 
   async init() {
@@ -39,6 +40,8 @@ class GalaxyTheme {
     this.setupDeviceIcons();
     this.setupEditButtons();
     this.setupPlaylistEditObserver();
+    this.createTitleEffects();
+    this.loadCustomFonts();
 
     // Listeners
     Spicetify.Platform.History.listen(this.onPageChange.bind(this));
@@ -515,18 +518,164 @@ class GalaxyTheme {
   }
   
   static TITLE_FONTS = [
-    { id: "default", label: "Instrument Serif", family: "Instrument Serif", query: "Instrument+Serif:ital@0;1", style: "italic", weight: 400 },
-    { id: "spotify", label: "Spotify", family: null },
-    { id: "playfair", label: "Playfair Display", family: "Playfair Display", query: "Playfair+Display:ital,wght@1,700", style: "italic", weight: 700 },
-    { id: "dmserif", label: "DM Serif Display", family: "DM Serif Display", query: "DM+Serif+Display", style: "normal", weight: 400 },
-    { id: "fraunces", label: "Fraunces", family: "Fraunces", query: "Fraunces:opsz,wght@9..144,800", style: "normal", weight: 800 },
-    { id: "pinyon", label: "Pinyon Script", family: "Pinyon Script", query: "Pinyon+Script", style: "normal", weight: 400 },
-    { id: "greatvibes", label: "Great Vibes", family: "Great Vibes", query: "Great+Vibes", style: "normal", weight: 400 },
-    { id: "bebas", label: "Bebas Neue", family: "Bebas Neue", query: "Bebas+Neue", style: "normal", weight: 400 },
-    { id: "syne", label: "Syne", family: "Syne", query: "Syne:wght@800", style: "normal", weight: 800 },
-    { id: "unbounded", label: "Unbounded", family: "Unbounded", query: "Unbounded:wght@700", style: "normal", weight: 700 },
-    { id: "spacegrotesk", label: "Space Grotesk", family: "Space Grotesk", query: "Space+Grotesk:wght@700", style: "normal", weight: 700 },
+    { id: "default", group: "Classic", label: "Instrument Serif", family: "Instrument Serif", query: "Instrument+Serif:ital@0;1", style: "italic", weight: 400 },
+    { id: "spotify", group: "Classic", label: "Spotify", family: null },
+    { id: "playfair", group: "Classic", label: "Playfair Display", family: "Playfair Display", query: "Playfair+Display:ital,wght@1,700", style: "italic", weight: 700 },
+    { id: "dmserif", group: "Classic", label: "DM Serif Display", family: "DM Serif Display", query: "DM+Serif+Display", style: "normal", weight: 400 },
+    { id: "fraunces", group: "Classic", label: "Fraunces", family: "Fraunces", query: "Fraunces:opsz,wght@9..144,800", style: "normal", weight: 800 },
+    { id: "bebas", group: "Classic", label: "Bebas Neue", family: "Bebas Neue", query: "Bebas+Neue", style: "normal", weight: 400 },
+    { id: "syne", group: "Classic", label: "Syne", family: "Syne", query: "Syne:wght@800", style: "normal", weight: 800 },
+    { id: "unbounded", group: "Classic", label: "Unbounded", family: "Unbounded", query: "Unbounded:wght@700", style: "normal", weight: 700 },
+    { id: "spacegrotesk", group: "Classic", label: "Space Grotesk", family: "Space Grotesk", query: "Space+Grotesk:wght@700", style: "normal", weight: 700 },
+    { id: "ballet", group: "Script", label: "Ballet", family: "Ballet", query: "Ballet", style: "normal", weight: 400 },
+    { id: "lavishly", group: "Script", label: "Lavishly Yours", family: "Lavishly Yours", query: "Lavishly+Yours", style: "normal", weight: 400 },
+    { id: "doulaise", group: "Script", label: "Monsieur La Doulaise", family: "Monsieur La Doulaise", query: "Monsieur+La+Doulaise", style: "normal", weight: 400 },
+    { id: "pinyon", group: "Script", label: "Pinyon Script", family: "Pinyon Script", query: "Pinyon+Script", style: "normal", weight: 400 },
+    { id: "greatvibes", group: "Script", label: "Great Vibes", family: "Great Vibes", query: "Great+Vibes", style: "normal", weight: 400 },
+    { id: "fleur", group: "Script", label: "Fleur De Leah", family: "Fleur De Leah", query: "Fleur+De+Leah", style: "normal", weight: 400 },
+    { id: "sofia", group: "Script", label: "Princess Sofia", family: "Princess Sofia", query: "Princess+Sofia", style: "normal", weight: 400 },
+    { id: "yesteryear", group: "Script", label: "Yesteryear", family: "Yesteryear", query: "Yesteryear", style: "normal", weight: 400 },
+    { id: "playball", group: "Script", label: "Playball", family: "Playball", query: "Playball", style: "normal", weight: 400 },
+    { id: "lilyscript", group: "Script", label: "Lily Script One", family: "Lily Script One", query: "Lily+Script+One", style: "normal", weight: 400 },
+    { id: "meow", group: "Script", label: "Meow Script", family: "Meow Script", query: "Meow+Script", style: "normal", weight: 400 },
+    { id: "macondo", group: "Script", label: "Macondo Swash Caps", family: "Macondo Swash Caps", query: "Macondo+Swash+Caps", style: "normal", weight: 400 },
+    { id: "doto", group: "Dotted & pixel", label: "Doto", family: "Doto", query: "Doto:wght@900", style: "normal", weight: 900 },
+    { id: "bitcount", group: "Dotted & pixel", label: "Bitcount", family: "Bitcount Prop Single", query: "Bitcount+Prop+Single", style: "normal", weight: 400 },
+    { id: "sixtyfour", group: "Dotted & pixel", label: "Sixtyfour", family: "Sixtyfour", query: "Sixtyfour", style: "normal", weight: 400 },
+    { id: "workbench", group: "Dotted & pixel", label: "Workbench", family: "Workbench", query: "Workbench", style: "normal", weight: 400 },
+    { id: "jacquard", group: "Dotted & pixel", label: "Jacquard 24", family: "Jacquard 24", query: "Jacquard+24", style: "normal", weight: 400 },
+    { id: "bastarda", group: "Dotted & pixel", label: "Jacquarda Bastarda", family: "Jacquarda Bastarda 9", query: "Jacquarda+Bastarda+9", style: "normal", weight: 400 },
+    { id: "handjet", group: "Dotted & pixel", label: "Handjet", family: "Handjet", query: "Handjet:wght@700", style: "normal", weight: 700 },
+    { id: "pixelify", group: "Dotted & pixel", label: "Pixelify Sans", family: "Pixelify Sans", query: "Pixelify+Sans:wght@700", style: "normal", weight: 700 },
+    { id: "tiny5", group: "Dotted & pixel", label: "Tiny5", family: "Tiny5", query: "Tiny5", style: "normal", weight: 400 },
+    { id: "distressed", group: "Textured", label: "Rubik Distressed", family: "Rubik Distressed", query: "Rubik+Distressed", style: "normal", weight: 400 },
+    { id: "burned", group: "Textured", label: "Rubik Burned", family: "Rubik Burned", query: "Rubik+Burned", style: "normal", weight: 400 },
+    { id: "wetpaint", group: "Textured", label: "Rubik Wet Paint", family: "Rubik Wet Paint", query: "Rubik+Wet+Paint", style: "normal", weight: 400 },
+    { id: "microbe", group: "Textured", label: "Rubik Microbe", family: "Rubik Microbe", query: "Rubik+Microbe", style: "normal", weight: 400 },
+    { id: "puddles", group: "Textured", label: "Rubik Puddles", family: "Rubik Puddles", query: "Rubik+Puddles", style: "normal", weight: 400 },
+    { id: "glitch", group: "Textured", label: "Rubik Glitch", family: "Rubik Glitch", query: "Rubik+Glitch", style: "normal", weight: 400 },
+    { id: "beastly", group: "Textured", label: "Rubik Beastly", family: "Rubik Beastly", query: "Rubik+Beastly", style: "normal", weight: 400 },
+    { id: "elite", group: "Textured", label: "Special Elite", family: "Special Elite", query: "Special+Elite", style: "normal", weight: 400 },
+    { id: "sedgwick", group: "Textured", label: "Sedgwick Ave Display", family: "Sedgwick Ave Display", query: "Sedgwick+Ave+Display", style: "normal", weight: 400 },
+    { id: "knewave", group: "Textured", label: "Knewave", family: "Knewave", query: "Knewave", style: "normal", weight: 400 },
+    { id: "monoton", group: "Display", label: "Monoton", family: "Monoton", query: "Monoton", style: "normal", weight: 400 },
+    { id: "moirai", group: "Display", label: "Moirai One", family: "Moirai One", query: "Moirai+One", style: "normal", weight: 400 },
+    { id: "tiltprism", group: "Display", label: "Tilt Prism", family: "Tilt Prism", query: "Tilt+Prism", style: "normal", weight: 400 },
+    { id: "bungeeshade", group: "Display", label: "Bungee Shade", family: "Bungee Shade", query: "Bungee+Shade", style: "normal", weight: 400 },
+    { id: "doodleshadow", group: "Display", label: "Rubik Doodle Shadow", family: "Rubik Doodle Shadow", query: "Rubik+Doodle+Shadow", style: "normal", weight: 400 },
+    { id: "danfo", group: "Display", label: "Danfo", family: "Danfo", query: "Danfo", style: "normal", weight: 400 },
+    { id: "climatecrisis", group: "Display", label: "Climate Crisis", family: "Climate Crisis", query: "Climate+Crisis", style: "normal", weight: 400 },
+    { id: "bagel", group: "Display", label: "Bagel Fat One", family: "Bagel Fat One", query: "Bagel+Fat+One", style: "normal", weight: 400 },
+    { id: "gasoek", group: "Display", label: "Gasoek One", family: "Gasoek One", query: "Gasoek+One", style: "normal", weight: 400 },
+    { id: "shrikhand", group: "Display", label: "Shrikhand", family: "Shrikhand", query: "Shrikhand", style: "normal", weight: 400 },
+    { id: "grenze", group: "Display", label: "Grenze Gotisch", family: "Grenze Gotisch", query: "Grenze+Gotisch:wght@700", style: "normal", weight: 700 },
   ];
+
+  static TITLE_EFFECTS = [
+    { id: "none", label: "None" },
+    { id: "ink", label: "Inkblot" },
+    { id: "bleed", label: "Ink bleed" },
+    { id: "halftone", label: "Halftone" },
+    { id: "lines", label: "Scanlines" },
+    { id: "pixel", label: "Pixelate" },
+    { id: "fill", label: "Cover fill" },
+  ];
+
+  titleFonts() {
+    return [...GalaxyTheme.TITLE_FONTS, ...this.customFonts];
+  }
+
+  createTitleEffects() {
+    const dot = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6"><radialGradient id="g"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><rect width="6" height="6" fill="url(#g)"/></svg>');
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.classList.add("galaxy-fx-defs");
+    svg.setAttribute("aria-hidden", "true");
+    // Pixel sizes are tuned for the 56px header title
+    svg.innerHTML = `
+      <filter id="galaxy-fx-ink" x="-5%" y="-10%" width="110%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="4" seed="7"/>
+        <feDisplacementMap in="SourceGraphic" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+        <feGaussianBlur stdDeviation="0.6"/>
+        <feComponentTransfer><feFuncA type="linear" slope="3" intercept="-1"/></feComponentTransfer>
+      </filter>
+      <filter id="galaxy-fx-bleed" x="-5%" y="-10%" width="110%" height="120%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3.2"/>
+        <feComponentTransfer><feFuncA type="linear" slope="14" intercept="-5"/></feComponentTransfer>
+      </filter>
+      <filter id="galaxy-fx-halftone" x="-5%" y="-10%" width="110%" height="120%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="1.6"/>
+        <feColorMatrix type="matrix" values="0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 1" result="density"/>
+        <feImage href="data:image/svg+xml,${dot}" width="6" height="6"/>
+        <feTile result="dots"/>
+        <feComposite in="density" in2="dots" operator="arithmetic" k2="0.5" k3="0.5"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 14 0 0 0 -8.6" result="mask"/>
+        <feMorphology in="SourceGraphic" operator="dilate" radius="3"/>
+        <feComposite in2="mask" operator="in"/>
+      </filter>
+      <filter id="galaxy-fx-pixel" x="0" y="0" width="100%" height="100%">
+        <feFlood x="2" y="2" width="1" height="1"/>
+        <feComposite width="4" height="4"/>
+        <feTile result="grid"/>
+        <feComposite in="SourceGraphic" in2="grid" operator="in"/>
+        <feMorphology operator="dilate" radius="2"/>
+        <feComponentTransfer><feFuncA type="discrete" tableValues="0 1"/></feComponentTransfer>
+      </filter>`;
+    document.body.append(svg);
+  }
+
+  openFontDb() {
+    this.fontDb ??= new Promise((resolve, reject) => {
+      const request = indexedDB.open("galaxy-fonts", 1);
+      request.onupgradeneeded = () => request.result.createObjectStore("fonts", { keyPath: "id" });
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    return this.fontDb;
+  }
+
+  async fontStore(mode, action) {
+    const db = await this.openFontDb();
+    return new Promise((resolve, reject) => {
+      const request = action(db.transaction("fonts", mode).objectStore("fonts"));
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async addCustomFont(record) {
+    const family = `Galaxy Custom ${record.id}`;
+    const face = await new FontFace(family, record.data.slice(0)).load();
+    document.fonts.add(face);
+    const font = { id: `custom:${record.id}`, group: "Your fonts", label: record.name, family, style: "normal", weight: 400, face };
+    this.customFonts.push(font);
+    return font;
+  }
+
+  async loadCustomFonts() {
+    try {
+      const records = await this.fontStore("readonly", (store) => store.getAll());
+      for (const record of records) await this.addCustomFont(record).catch(() => {});
+    } catch (e) {}
+    this.customFontsLoaded = true;
+    this.applyTitleFont();
+  }
+
+  async importCustomFont(file) {
+    const record = { id: Date.now().toString(36), name: file.name.replace(/\.(ttf|otf|woff2?)$/i, "").replace(/[-_]+/g, " "), data: await file.arrayBuffer() };
+    try {
+      const font = await this.addCustomFont(record);
+      await this.fontStore("readwrite", (store) => store.put(record));
+      return font;
+    } catch (e) {
+      Spicetify.showNotification(`Couldn't read ${file.name} as a font`, true);
+    }
+  }
+
+  async removeCustomFont(font) {
+    this.customFonts = this.customFonts.filter((f) => f !== font);
+    document.fonts.delete(font.face);
+    await this.fontStore("readwrite", (store) => store.delete(font.id.slice("custom:".length)));
+  }
 
   loadTitleFont(font) {
     if (!font.query || document.querySelector(`link[data-galaxy-font="${font.id}"]`)) return;
@@ -540,8 +689,10 @@ class GalaxyTheme {
 
   applyTitleFont(header = document.querySelector('[data-testid="entity-header"]')) {
     if (!header || !this.fontPageUri) return;
+    this.applyTitleEffect(header);
     const id = localStorage.getItem(`galaxy:titleFont:${this.fontPageUri}`) || "default";
-    const font = GalaxyTheme.TITLE_FONTS.find((f) => f.id === id) || GalaxyTheme.TITLE_FONTS[0];
+    if (id.startsWith("custom:") && !this.customFontsLoaded) return;
+    const font = this.titleFonts().find((f) => f.id === id) || GalaxyTheme.TITLE_FONTS[0];
     if (header.dataset.galaxyFont === font.id) return;
     header.dataset.galaxyFont = font.id;
     this.loadTitleFont(font);
@@ -557,6 +708,18 @@ class GalaxyTheme {
     }
   }
 
+  applyTitleEffect(header) {
+    const effect = localStorage.getItem(`galaxy:titleFx:${this.fontPageUri}`);
+    if (!effect) return header.removeAttribute("data-galaxy-fx");
+    if (header.dataset.galaxyFx !== effect) header.dataset.galaxyFx = effect;
+    if (effect !== "fill") return;
+    // Playlist covers come through as spotify:mosaic:<id>:<id>…, which CSS can't load
+    const src = header.querySelector(".main-entityHeader-image")?.src;
+    const cover = src && (GalaxyTheme.toCoverUrl(src.startsWith("spotify:mosaic:") ? `spotify:image:${src.split(":")[2]}` : src) || src);
+    const fill = cover ? `url("${cover}")` : "none";
+    if (header.style.getPropertyValue("--galaxy-title-fill") !== fill) header.style.setProperty("--galaxy-title-fill", fill);
+  }
+
   ensureFontButton() {
     const header = document.querySelector('[data-testid="entity-header"]');
     if (!header || !this.fontPageUri) return;
@@ -570,9 +733,27 @@ class GalaxyTheme {
     button.addEventListener("click", (event) => {
       event.stopPropagation();
       this.fontMenu ? this.closeFontMenu() : this.openFontMenu(button);
-      button.setAttribute("aria-expanded", String(!!this.fontMenu));
     });
     header.append(button);
+  }
+
+  titleEffectChips() {
+    const key = `galaxy:titleFx:${this.fontPageUri}`;
+    const current = localStorage.getItem(key) || "none";
+    const chips = document.createElement("div");
+    chips.className = "galaxy-fx-chips";
+    for (const effect of GalaxyTheme.TITLE_EFFECTS) {
+      const chip = Object.assign(document.createElement("button"), { type: "button", textContent: effect.label });
+      chip.setAttribute("role", "menuitemradio");
+      chip.setAttribute("aria-checked", String(effect.id === current));
+      chip.addEventListener("click", () => {
+        effect.id === "none" ? localStorage.removeItem(key) : localStorage.setItem(key, effect.id);
+        chips.querySelectorAll("button").forEach((c) => c.setAttribute("aria-checked", String(c === chip)));
+        this.applyTitleFont();
+      });
+      chips.append(chip);
+    }
+    return chips;
   }
 
   openFontMenu(button) {
@@ -581,10 +762,16 @@ class GalaxyTheme {
     const menu = document.createElement("div");
     menu.className = "galaxy-font-menu";
     menu.setAttribute("role", "menu");
-    for (const font of GalaxyTheme.TITLE_FONTS) {
+    const heading = (text) => menu.append(Object.assign(document.createElement("div"), { className: "galaxy-font-heading", textContent: text }));
+    heading("Effect");
+    menu.append(this.titleEffectChips());
+    let group;
+    for (const font of this.titleFonts()) {
+      if (font.group !== group) heading((group = font.group));
       this.loadTitleFont(font);
       const item = document.createElement("button");
       item.type = "button";
+      item.className = "galaxy-font-item";
       item.setAttribute("role", "menuitemradio");
       item.setAttribute("aria-checked", String(font.id === current));
       item.innerHTML = `<span class="galaxy-font-sample"></span><span class="galaxy-font-name"></span>`;
@@ -596,15 +783,48 @@ class GalaxyTheme {
         font.id === "default"
           ? localStorage.removeItem(`galaxy:titleFont:${this.fontPageUri}`)
           : localStorage.setItem(`galaxy:titleFont:${this.fontPageUri}`, font.id);
+        menu.querySelectorAll(".galaxy-font-item").forEach((i) => i.setAttribute("aria-checked", String(i === item)));
         this.applyTitleFont();
-        this.closeFontMenu();
       });
-      menu.append(item);
+      if (!font.face) {
+        menu.append(item);
+        continue;
+      }
+      const row = document.createElement("div");
+      row.className = "galaxy-font-custom";
+      const remove = Object.assign(document.createElement("button"), { type: "button", className: "galaxy-font-remove", textContent: "×" });
+      remove.setAttribute("aria-label", `Remove ${font.label}`);
+      remove.addEventListener("click", async () => {
+        await this.removeCustomFont(font);
+        this.closeFontMenu();
+        this.applyTitleFont();
+        this.openFontMenu(button);
+      });
+      row.append(item, remove);
+      menu.append(row);
     }
+    if (!this.customFonts.length) heading("Your fonts");
+    const input = Object.assign(document.createElement("input"), { type: "file", accept: ".ttf,.otf,.woff,.woff2", hidden: true });
+    const add = Object.assign(document.createElement("button"), { type: "button", className: "galaxy-font-add", textContent: "+ Add a font file (.ttf, .otf, .woff)" });
+    add.addEventListener("click", () => input.click());
+    input.addEventListener("change", async () => {
+      const font = input.files[0] && (await this.importCustomFont(input.files[0]));
+      if (!font) return;
+      localStorage.setItem(`galaxy:titleFont:${this.fontPageUri}`, font.id);
+      this.applyTitleFont();
+      this.closeFontMenu();
+      this.openFontMenu(button);
+    });
+    menu.append(add, input);
+    // Open beside the button when there's room, so the title stays visible while trying fonts
     const rect = button.getBoundingClientRect();
-    menu.style.top = `${rect.bottom + 8}px`;
-    menu.style.right = `${innerWidth - rect.right}px`;
+    const beside = innerWidth - rect.right > 340;
+    const top = beside ? rect.top : rect.bottom + 8;
+    menu.style.top = `${top}px`;
+    beside ? (menu.style.left = `${rect.right + 8}px`) : (menu.style.right = `${innerWidth - rect.right}px`);
+    menu.style.maxHeight = `${Math.min(560, innerHeight - top - 32)}px`;
     document.body.append(menu);
+    button.setAttribute("aria-expanded", "true");
     this.fontMenu = menu;
     this.fontMenuDismiss = (event) => {
       if (event.type === "keydown" ? event.key === "Escape" : !menu.contains(event.target)) this.closeFontMenu();
