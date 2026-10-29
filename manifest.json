@@ -1,0 +1,15 @@
+{
+  "name": "Glass",
+  "description": "Glass panels over an animated gradient in your music's colours, a tiled cover reel on playlist headers, per-playlist title fonts and drawn Connect device icons.",
+  "preview": "preview.png",
+  "readme": "README.md",
+  "usercss": "user.css",
+  "schemes": "color.ini",
+  "include": ["https://raw.githubusercontent.com/cplus2jules/spicetify-glass/main/theme.js"],
+  "authors": [
+    {
+      "name": "cplus2jules",
+      "url": "https://github.com/cplus2jules"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "spicetify-glass",
+  "version": "1.0.0",
+  "description": "Glass panels, an animated cover-colour gradient and a tiled cover reel for Spotify",
+  "private": true,
+  "scripts": {
+    "dev": "vite"
+  },
+  "license": "ISC",
+  "packageManager": "pnpm@10.18.3",
+  "devDependencies": {
+    "vite": "^8.0.3"
+  }
+}
