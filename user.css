@@ -671,6 +671,11 @@ HIDE BACKGROUNDS
     box-shadow: none !important;
     background: linear-gradient(to bottom, rgba(12, 12, 16, 0.45), rgba(12, 12, 16, 0)) !important;
 }
+/* the blur layers below are sized to the header, but the Queue and Recently played headers aren't positioned,
+   so the layers stretched over the whole panel. Zero specificity leaves headers Spotify positions itself alone */
+:where(.Root__right-sidebar-peek aside > div > div:first-child:has(+ [data-overlayscrollbars-initialize])) {
+    position: relative;
+}
 .Root__right-sidebar-peek aside > div > div:first-child:has(+ [data-overlayscrollbars-initialize])::before,
 .Root__right-sidebar-peek aside > div > div:first-child:has(+ [data-overlayscrollbars-initialize])::after {
     content: "";
