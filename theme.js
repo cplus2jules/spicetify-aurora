@@ -46,6 +46,7 @@ class GalaxyTheme {
     // Listeners
     Spicetify.Platform.History.listen(this.onPageChange.bind(this));
     Spicetify.Player.addEventListener("songchange", this.onSongChange.bind(this));
+    this.setupCinema();
     // Lets CSS pause the playhead star while nothing is playing
     const syncPlaying = () => document.documentElement.classList.toggle("galaxy-playing", Spicetify.Player.isPlaying());
     Spicetify.Player.addEventListener("onplaypause", syncPlaying);
@@ -130,8 +131,13 @@ class GalaxyTheme {
     document.documentElement.style.setProperty("--galaxy-header-cover", value);
   }
 
-  setCoverGradient(colors) {
+  setCoverGradient(colors, fromCinema = false) {
     if (!this.bgContainer) return;
+    // The video view hides the page, so the page's colours wait until it closes
+    if (this.inCinema && !fromCinema) {
+      this.cinemaRestore = colors;
+      return;
+    }
     const style = this.bgContainer.style;
     if (colors?.base && colors.base !== style.getPropertyValue("--galaxy-cover-base")) style.setProperty("--galaxy-cover-base", colors.base);
     if (colors?.light && colors.light !== style.getPropertyValue("--galaxy-cover-light")) style.setProperty("--galaxy-cover-light", colors.light);
@@ -139,6 +145,37 @@ class GalaxyTheme {
     if (this.bgContainer.classList.contains("cover-gradient") === on) return;
     this.bgContainer.classList.toggle("cover-gradient", on);
     document.documentElement.classList.toggle("galaxy-gradient-bg", on);
+  }
+
+  // Spotify's expanded Now Playing view, where music videos play, covers the page, so while it's open the
+  // gradient follows the playing song instead
+  setupCinema() {
+    const root = document.documentElement;
+    const sync = () => {
+      const open = root.hasAttribute("data-cinema-npv-postenter");
+      if (open === !!this.inCinema) return;
+      if (open) {
+        const style = this.bgContainer.style;
+        this.cinemaRestore = this.bgContainer.classList.contains("cover-gradient")
+          ? { base: style.getPropertyValue("--galaxy-cover-base"), light: style.getPropertyValue("--galaxy-cover-light") }
+          : null;
+        this.inCinema = true;
+        this.applyCinemaColors();
+      } else {
+        this.inCinema = false;
+        this.setCoverGradient(this.cinemaRestore);
+      }
+    };
+    new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-cinema-npv-postenter"] });
+    sync();
+  }
+
+  async applyCinemaColors() {
+    // null means a custom background image is showing rather than the gradient
+    if (!this.cinemaRestore) return;
+    const token = (this.cinemaToken = (this.cinemaToken || 0) + 1);
+    const color = await this.fetchTrackColor();
+    if (token === this.cinemaToken && this.inCinema && color) this.setCoverGradient({ base: color, light: color }, true);
   }
 
   static toCoverUrl(url) {
@@ -519,6 +556,7 @@ class GalaxyTheme {
   onSongChange() {
     const pathname = Spicetify.Platform.History.location.pathname;
     if (this.usesTrackImage) this.fetchCurrTrackAlbumImage();
+    if (this.inCinema) this.applyCinemaColors();
     this.loopOptions(pathname);
   }
   
