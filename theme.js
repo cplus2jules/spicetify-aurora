@@ -90,11 +90,31 @@ class GalaxyTheme {
     
     this.bgContainer.innerHTML = `
         <div class="bg-image-container"><img class="bg-main-image"></div>
+        <div class="bg-cover-gradient is-front"><span></span><span></span><span></span><span></span></div>
         <div class="bg-cover-gradient"><span></span><span></span><span></span><span></span></div>
         <div class="gradual-blur-container">${blurLayers}</div>
     `;
     this.bgImage = this.bgContainer.querySelector(".bg-main-image");
     document.body.prepend(this.bgContainer);
+  }
+
+  // The next colours go on the hidden copy of the gradient, which fades in over the shown one. Only one fade runs at
+  // a time, as restyling the copy that's fading out would show as a jump, so a change during a fade waits for it
+  fadeGradient() {
+    if (this.gradientFade) return;
+    const style = this.bgContainer.style;
+    const [front, back] = [...this.bgContainer.querySelectorAll(".bg-cover-gradient")].sort((a) => (a.classList.contains("is-front") ? -1 : 1));
+    const base = style.getPropertyValue("--galaxy-cover-base");
+    const light = style.getPropertyValue("--galaxy-cover-light");
+    if (base === front.style.getPropertyValue("--galaxy-cover-base") && light === front.style.getPropertyValue("--galaxy-cover-light")) return;
+    if (base) back.style.setProperty("--galaxy-cover-base", base);
+    if (light) back.style.setProperty("--galaxy-cover-light", light);
+    front.classList.remove("is-front");
+    back.classList.add("is-front");
+    this.gradientFade = setTimeout(() => {
+      this.gradientFade = null;
+      this.fadeGradient();
+    }, 1200);
   }
 
   setBg(imageData) {
@@ -141,6 +161,7 @@ class GalaxyTheme {
     const style = this.bgContainer.style;
     if (colors?.base && colors.base !== style.getPropertyValue("--galaxy-cover-base")) style.setProperty("--galaxy-cover-base", colors.base);
     if (colors?.light && colors.light !== style.getPropertyValue("--galaxy-cover-light")) style.setProperty("--galaxy-cover-light", colors.light);
+    this.fadeGradient();
     const on = !!colors;
     if (this.bgContainer.classList.contains("cover-gradient") === on) return;
     this.bgContainer.classList.toggle("cover-gradient", on);
@@ -238,7 +259,8 @@ class GalaxyTheme {
     let dpr = 1;
 
     const fit = () => {
-      dpr = devicePixelRatio || 1;
+      // The CSS blur hides the detail, so retina pixels would only be four times the work
+      dpr = Math.min(devicePixelRatio || 1, 1);
       const w = Math.round(reel.clientWidth * dpr), h = Math.round(reel.clientHeight * dpr);
       if (canvas.width === w && canvas.height === h) return false;
       Object.assign(canvas, { width: w, height: h });
@@ -364,6 +386,11 @@ class GalaxyTheme {
 
     const advance = () => {
       if (images.length === 1 && current) return;
+      // Nobody's watching, and the colours would keep repainting the gradient behind the window
+      if (document.hidden) {
+        this.reelTimeout = setTimeout(advance, HOLD);
+        return;
+      }
       for (let step = 1; step <= images.length; step++) {
         const candidate = (index + step) % images.length;
         if (ready(images[candidate]) && images[candidate] !== current) {
@@ -481,13 +508,14 @@ class GalaxyTheme {
       if(!mainContent) return;
 
       let queued = false;
+      // Spaced out, as long lists mutate on every frame of a scroll
       this.entityObserver = new MutationObserver(() => {
          if (queued) return;
          queued = true;
-         requestAnimationFrame(() => {
+         setTimeout(() => {
            queued = false;
            checkForImage();
-         });
+         }, 100);
       });
       // Watch the entire structural tree for changes! Destroys bug where React component unmount breaks observer.
       this.entityObserver.observe(mainContent, { childList: true, subtree: true, attributes: true, attributeFilter: ["src"] });

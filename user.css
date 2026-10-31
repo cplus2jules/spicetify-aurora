@@ -305,26 +305,31 @@ footer.main-nowPlayingBar-container {
 .x-progressBar-fillColor {
     transition: transform 1s linear;
 }
-.progress-bar__slider {
-    transition: left 1s linear;
-}
-.playback-progressbar-isInteractive .DuvrswZugGajIFNXObAr .x-progressBar-fillColor,
-.playback-progressbar-isInteractive .DuvrswZugGajIFNXObAr .progress-bar__slider {
+/* follow the cursor exactly while dragging */
+.progress-bar:active .x-progressBar-fillColor,
+.progress-bar:active .progress-bar__slider {
     transition: none;
 }
 /* the playhead is a spinning, glowing star */
 [data-testid="playback-progressbar"] .progress-bar {
     overflow: visible;
 }
+/* The slider spans the bar and slides on transform, exactly like the fill, with the star on its right edge. Tweening
+   left instead re-lays out the page every frame, and stalls behind the fill whenever the main thread is busy */
 [data-testid="playback-progressbar"] .progress-bar__slider {
     --galaxy-star-glow: oklch(from var(--BeautifulLyrics-CoverAccent, #fff) 0.86 min(c, 0.16) h);
     display: block;
-    width: 18px;
+    left: 0;
+    width: 100%;
     height: 18px;
-    margin-left: -9px;
+    margin-left: 0;
     background: none;
     border-radius: 0;
     box-shadow: none;
+    pointer-events: none;
+    will-change: transform;
+    transform: translate(calc(var(--progress-bar-transform) - 100%), -50%);
+    transition: transform 1s linear;
 }
 /* the same star on Beautiful Lyrics' fullscreen timeline, sized off its bar like the dot it replaces */
 .BeautifulLyricsPage .Timeline .SliderBar .Handle {
@@ -340,11 +345,11 @@ footer.main-nowPlayingBar-container {
     content: "";
     position: absolute;
 }
+/* the white glow is drawn into the image, as a CSS filter on a spinning layer is re-run every frame */
 [data-testid="playback-progressbar"] .progress-bar__slider::before,
 .BeautifulLyricsPage .Timeline .Handle::before {
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2.5l2.9 5.9 6.5.95-4.7 4.58 1.1 6.47L12 17.35l-5.8 3.05 1.1-6.47-4.7-4.58 6.5-.95z' fill='white' stroke='white' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
-    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px var(--galaxy-star-glow));
+    inset: -25%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='-6 -6 36 36'%3E%3Cdefs%3E%3Cfilter id='g' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeGaussianBlur stdDeviation='1.5'/%3E%3C/filter%3E%3Cpath id='s' d='M12 2.5l2.9 5.9 6.5.95-4.7 4.58 1.1 6.47L12 17.35l-5.8 3.05 1.1-6.47-4.7-4.58 6.5-.95z' fill='white' stroke='white' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/defs%3E%3Cuse xlink:href='%23s' filter='url(%23g)'/%3E%3Cuse xlink:href='%23s'/%3E%3C/svg%3E") center / contain no-repeat;
     animation: galaxy-star-spin 4s linear infinite;
     transition: scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -356,6 +361,14 @@ footer.main-nowPlayingBar-container {
     background: radial-gradient(circle, var(--galaxy-star-glow) 0%, transparent 65%);
     animation: galaxy-star-pulse 2.4s ease-in-out infinite alternate;
 }
+[data-testid="playback-progressbar"] .progress-bar__slider::before {
+    inset: -4.5px -13.5px -4.5px auto;
+    width: 27px;
+}
+[data-testid="playback-progressbar"] .progress-bar__slider::after {
+    inset: -9px -18px -9px auto;
+    width: 36px;
+}
 [data-testid="playback-progressbar"] .progress-bar:hover .progress-bar__slider::before,
 .BeautifulLyricsPage .Timeline:hover .Handle::before {
     scale: 1.25;
@@ -366,9 +379,14 @@ html:not(.galaxy-playing) .BeautifulLyricsPage .Timeline .Handle::before,
 html:not(.galaxy-playing) .BeautifulLyricsPage .Timeline .Handle::after {
     animation-play-state: paused;
 }
+/* Both the transform and the explicit from matter: rotate, or an implied start, forces a main-thread frame on every
+   vsync while the slider's own transition runs, and every running animation gets restyled in each of those frames */
 @keyframes galaxy-star-spin {
+    from {
+        transform: rotate(0deg);
+    }
     to {
-        rotate: 360deg;
+        transform: rotate(360deg);
     }
 }
 @keyframes galaxy-star-pulse {
@@ -505,7 +523,7 @@ MAIN VIEW
     right: 0;
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(45deg) translate(0px, -90%);
-    transition: all 0.3s ease-out;
+    transition: transform 0.3s ease-out, filter 0.3s ease-out;
     filter: blur(4px);
 }
 .main-card-card .main-card-imageContainer {
@@ -604,7 +622,7 @@ div.main-gridContainer-gridContainer.main-shelf-shelfGrid > a >div:after {
     right: 0;
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(45deg) translate(0px, -90%);
-    transition: all 0.3s ease-out;
+    transition: transform 0.3s ease-out, filter 0.3s ease-out;
     filter: blur(4px);
 }
 div.main-gridContainer-gridContainer.main-shelf-shelfGrid > a >div:hover::after{
@@ -763,6 +781,23 @@ HIDE BACKGROUNDS
     backdrop-filter: blur(16px) saturate(1.3);
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+/* the gradient is too soft to show any blur, and each of these would be re-run on every step of it */
+.galaxy-gradient-bg #global-nav-bar button,
+.galaxy-gradient-bg #global-nav-bar input {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+/* the nav bar's surfaces are see-through, so the search results bring their own glass */
+#search-dropdown > div {
+    background: rgba(20, 20, 26, 0.82) !important;
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+#search-dropdown button {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 [data-testid="entity-header"] .main-entityHeader-title,
@@ -1413,28 +1448,37 @@ img.bg-main-image {
     inherits: true;
     initial-value: #5b3f7a;
 }
-.bg-main-container {
-    transition: --galaxy-cover-base 1.2s ease, --galaxy-cover-light 1.2s ease;
-}
+/* There are two copies of the gradient: new colours go on the hidden one, which fades in over the other. Tweening
+   the colours themselves would repaint all the blobs on the main thread every frame */
 .bg-cover-gradient {
     position: absolute;
     inset: 0;
     overflow: hidden;
     opacity: 0;
-    transition: opacity 0.6s ease;
+    transition: opacity 0s 1.2s;
     background: var(--galaxy-cover-base);
     background: oklch(from var(--galaxy-cover-base) calc(l * 0.45) c h);
 }
-.bg-main-container.cover-gradient .bg-cover-gradient {
-    opacity: 1;
+.bg-main-container:not(.cover-gradient) .bg-cover-gradient {
+    transition: opacity 0.6s ease;
 }
+.bg-main-container.cover-gradient .bg-cover-gradient.is-front {
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 1.2s ease;
+}
+/* Everything is glass over these, so any step redraws the whole window. They're too soft for 60fps to show, so all
+   four step together at 10fps: same duration, steps of 100ms, and delays in multiples of that */
 .bg-cover-gradient span {
     position: absolute;
     width: 42.5vmax;
     height: 42.5vmax;
     border-radius: 50%;
     will-change: transform;
-    animation: galaxy-drift 32s ease-in-out infinite alternate;
+    animation: galaxy-drift 42s steps(140) infinite alternate;
+}
+html:not(.galaxy-playing) .bg-cover-gradient span {
+    animation-play-state: paused;
 }
 .bg-cover-gradient span:nth-child(1) {
     top: -30%;
@@ -1445,27 +1489,26 @@ img.bg-main-image {
     top: -10%;
     right: -30%;
     background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-base) calc(l + 0.1) calc(c + 0.04) calc(h + 40) / 0.85), transparent);
-    animation-duration: 38s;
-    animation-delay: -8s;
+    animation-direction: alternate-reverse;
+    animation-delay: -9s;
 }
 .bg-cover-gradient span:nth-child(3) {
     bottom: -40%;
     left: 10%;
     background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-light) l c calc(h - 35) / 0.7), transparent);
-    animation-duration: 44s;
-    animation-delay: -16s;
+    animation-delay: -21s;
 }
 .bg-cover-gradient span:nth-child(4) {
     bottom: -30%;
     right: -10%;
     background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-base) calc(l + 0.18) c h / 0.6), transparent);
-    animation-duration: 50s;
-    animation-delay: -24s;
+    animation-direction: alternate-reverse;
+    animation-delay: -33s;
 }
 @keyframes galaxy-drift {
     0% { transform: translate(0, 0) scale(2) rotate(0deg); }
-    33% { transform: translate(12vw, 8vh) scale(2.3) rotate(40deg); }
-    66% { transform: translate(-8vw, 14vh) scale(1.8) rotate(-30deg); }
+    33.3333% { transform: translate(12vw, 8vh) scale(2.3) rotate(40deg); }
+    66.6667% { transform: translate(-8vw, 14vh) scale(1.8) rotate(-30deg); }
     100% { transform: translate(6vw, -10vh) scale(2.2) rotate(20deg); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1546,7 +1589,10 @@ section[data-testid="album-page"] .main-entityHeader-title {
     height: calc(100% + 640px);
     filter: blur(90px) saturate(1.5);
     will-change: transform;
-    animation: galaxy-album-drift 28s ease-in-out infinite alternate;
+    animation: galaxy-album-drift 42s steps(210) infinite alternate;
+}
+html:not(.galaxy-playing) .galaxy-album-page main section > [data-testid="entity-header"]::before {
+    animation-play-state: paused;
 }
 @keyframes galaxy-album-drift {
     0% { transform: scale(1.1) rotate(0deg) translate(0, 0); }
