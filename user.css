@@ -458,7 +458,9 @@ MAIN VIEW
 .main-card-cardContainer:hover::after{
     background-color: rgba(255, 255, 255, 0.06) !important;
 }
-.main-gridContainer-gridContainer{
+/* Spotify works out how many cards fit a shelf from its own gap, so a wider one wraps the last card onto a
+   zero-height row, where it lands on the next section */
+.main-gridContainer-gridContainer:not([class*="nrVisibleCards"]) {
     gap:8px;
 }
 .main-card-cardContainer,
@@ -1072,6 +1074,7 @@ HIDE BACKGROUNDS
 [data-testid="entity-header"] > div[style*="background-color"] + div:not(.main-entityHeader-contentWrapper),
 div[style*="--background-base"]:first-child:has(+ [data-overlayscrollbars-initialize]),
 [data-testid="entity-header"] + div[style*="background-color"],
+[data-testid="entity-header"] + div > div[style*="background-color"]:first-child,
 .before-scroll-node [data-testid="overscroll-background"] {
     display: none !important;
 }
