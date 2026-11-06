@@ -173,8 +173,13 @@ class GalaxyTheme {
   // gradient follows the playing song instead
   setupCinema() {
     const root = document.documentElement;
+    // Opened from the expanded library it's marked cinema-library-npv, which also stays on the way back to the
+    // library, so there the view's own Now Playing class decides
     const sync = () => {
-      const open = root.hasAttribute("data-cinema-npv-postenter");
+      const open = root.hasAttribute("data-cinema-npv-postenter") || (
+        root.hasAttribute("data-cinema-library-npv-postenter") &&
+        document.querySelector(".BKBhMtk7_HSsKiFLJtC_.XPcjknPx9Iz154ZPbxvD") !== null
+      );
       if (open === !!this.inCinema) return;
       if (open) {
         const style = this.bgContainer.style;
@@ -188,7 +193,7 @@ class GalaxyTheme {
         this.setCoverGradient(this.cinemaRestore);
       }
     };
-    new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-cinema-npv-postenter"] });
+    new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-cinema-npv-postenter", "data-cinema-library-npv-postenter"] });
     sync();
   }
 
@@ -340,6 +345,11 @@ class GalaxyTheme {
     };
     const frame = (now) => {
       if (fit()) redrawAll();
+      // the page is hidden behind the video view (the header has no size), so wait for it to come back
+      if (!canvas.width || !canvas.height) {
+        this.reelFrame = requestAnimationFrame(frame);
+        return;
+      }
       const t = now - start;
       const p = Math.min(1, t / FILL);
       const eased = p < 0.5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2;

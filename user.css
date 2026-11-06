@@ -1770,12 +1770,33 @@ html:not(.galaxy-playing) .galaxy-album-page main section > [data-testid="entity
     background: transparent !important;
 }
 /* Spotify leaves the right panel and its resize handle under the view, where they'd show through the glass */
-[data-cinema-npv-postEnter]:not([data-right-sidebar-open-duringEnter], [data-right-sidebar-open-postEnter], [data-right-sidebar-open-preExit]) :is(.Root__right-sidebar-peek, .LayoutResizer__resize-bar) {
+[data-cinema-npv-postEnter]:not([data-right-sidebar-open-duringEnter], [data-right-sidebar-open-postEnter], [data-right-sidebar-open-preExit]) :is(.Root__right-sidebar-peek, .LayoutResizer__resize-bar),
+[data-cinema-library-npv-postEnter]:not([data-right-sidebar-open-duringEnter], [data-right-sidebar-open-postEnter], [data-right-sidebar-open-preExit]) .Root > div:has(> .BKBhMtk7_HSsKiFLJtC_.XPcjknPx9Iz154ZPbxvD) :is(.Root__right-sidebar-peek, .LayoutResizer__resize-bar) {
     visibility: hidden;
+}
+/* Opened while the expanded library is up, the view is marked cinema-library-npv instead, and Spotify leaves the
+   page and library under it, relying on the solid fill the glass replaces. The mark stays on the way back to the
+   library too, so the view's own Now Playing class (XPcj...) decides. content-visibility as well, because Spotify
+   sets an inline visibility: visible on page titles */
+[data-cinema-library-npv-postEnter] .Root > div:has(> .BKBhMtk7_HSsKiFLJtC_.XPcjknPx9Iz154ZPbxvD) > :is(#main-view, #Desktop_LeftSidebar_Id) {
+    visibility: hidden;
+    content-visibility: hidden;
+}
+/* Spotify's own lyrics, which it shows here when "Show lyrics" is picked and no video plays. The lyrics extension
+   turns that choice back to the cover and runs its captions over it; this covers the moment before it does */
+.BKBhMtk7_HSsKiFLJtC_ .bm5I7yGVN8NXt6vH9eiC {
+    display: none !important;
 }
 /* with the right panel open beside a playing video, Spotify fills the gap to its left with --spice-sidebar (black) */
 .QYUSmNvwjiwG7ViRn5mN.WIXLRqkC7_2cQAH9Ute4::before {
     display: none;
+}
+/* ambient mode and fullscreen slide the view up over the top bar. Only ambient fades the bar itself: in fullscreen
+   Spotify relies on the solid backdrop to cover it, so it would show beside the picture through the glass */
+.Root > div:has(> .BKBhMtk7_HSsKiFLJtC_:is(._S8BM1G4Z1K7pqORZFWx, .WIVAqUssTyLKoiTQmhNt)) > #global-nav-bar {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease-out 0.5s;
 }
 /* the cards below the video (the related-videos row is one too, but bare) */
 .BKBhMtk7_HSsKiFLJtC_ .nL2a9KOrkvOlg4iyuRDL:not(.wZK06wNDjv7uw4aR5xjk) {
@@ -1789,7 +1810,8 @@ html:not(.galaxy-playing) .galaxy-album-page main section > [data-testid="entity
     background-color: transparent;
 }
 /* the playbar floats over the video here, so it needs the blur the gradient background lets it skip */
-:is([data-cinema-npv-duringEnter], [data-cinema-npv-postEnter], [data-cinema-npv-preExit]) [data-testid="now-playing-bar"] {
+:is([data-cinema-npv-duringEnter], [data-cinema-npv-postEnter], [data-cinema-npv-preExit]) [data-testid="now-playing-bar"],
+[data-cinema-library-npv-postEnter] .Root > div:has(> .BKBhMtk7_HSsKiFLJtC_.XPcjknPx9Iz154ZPbxvD) [data-testid="now-playing-bar"] {
     backdrop-filter: var(--galaxy-glass-blur);
     -webkit-backdrop-filter: var(--galaxy-glass-blur);
 }
