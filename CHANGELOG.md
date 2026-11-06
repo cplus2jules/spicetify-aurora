@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.0 (2026-11-07)
+
+### Fixes
+
+- Music video captions show however the video view is opened. Opened while the expanded Your Library was up, they didn't appear until you closed the video and reopened it
+- The music video view opened from the expanded library no longer shows the page, the library or the right panel through it, and its background follows the playing song
+- Spotify's own lyrics no longer take over the video view when a song without a video plays. The cover shows instead, with the karaoke captions over it
+- The Now Playing panel's expand button opens the video view while a video plays, instead of the full screen lyrics page
+- Caption sync is learned on every switch between a video and its song. It used to miss videos linked to another release of the song, and could save offsets like 102 seconds
+
+### New
+
+- A music video can be split into parts, each with its own caption timing, for videos with a cut or an interlude midway. Press ⌥↓ where the lyrics go off, then ⌥← ⌥→ to nudge that part. ⌥0 resets the video
+- AirPods, AirPods Pro and Max, Beats, Powerbeats, gaming headsets, smart glasses and earbuds get their own icons in the device menu and on the playbar's connect button, including this computer's own output when it plays locally
+
 ## 1.1.0 (2026-11-07)
 
 ### Fixes

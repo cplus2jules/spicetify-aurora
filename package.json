@@ -1,6 +1,6 @@
 {
   "name": "spicetify-aurora",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Frosted glass panels, an animated cover-colour gradient and built-in synced lyrics for Spotify",
   "private": true,
   "scripts": {
