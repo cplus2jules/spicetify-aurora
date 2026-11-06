@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.1.0 (2026-11-07)
+
+### Fixes
+
+- The expanded Your Library no longer shows the page behind it through the glass, or a darker band where that page starts. It also stops that page rendering underneath, which made opening the library lag over the lyrics page
+- Aurora does much less rendering work while music plays. The playhead star, the gradient and the cover reel no longer redraw the whole window every frame
+- Dragging the playhead follows the cursor again
+- Cards no longer wrap onto the next section of a shelf, and artist pages show the card they were dropping
+- The grey block behind the action bar on artist pages is gone
+- The right panel's header blur stays under the header in Queue and Recently played
+
+### New
+
+- Music videos play their song's lyrics as karaoke captions over the video
+- The music video view is a glass panel too: no black outline, translucent cards below the video, and the gradient follows the playing song while it's open
+- The seek preview above the progress bar is a frosted card and no longer gets cut off
+
 ## 1.0.1 (2026-10-30)
 
 ### Fixes
