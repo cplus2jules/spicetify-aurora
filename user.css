@@ -411,6 +411,10 @@ html:not(.galaxy-playing) .BeautifulLyricsPage .Timeline .Handle::after {
 .main-connectBar-connectBar {
     border-radius: 0;
 }
+/* device glyphs (theme.js) sit over Spotify's own, which stays underneath for React to swap */
+svg:has(> .galaxy-device-glyph) > :not(.galaxy-device-glyph) {
+    display: none;
+}
 /*
 -------------------
 MAIN VIEW

@@ -38,6 +38,7 @@ class GalaxyTheme {
     this.setupScrollListeners();
     this.setupPanelSwitch();
     this.setupDeviceIcons();
+    this.setupPlaybarDeviceIcon();
     this.setupEditButtons();
     this.setupPlaylistEditObserver();
     this.createTitleEffects();
@@ -955,6 +956,15 @@ class GalaxyTheme {
     portableSpeaker: '<rect x="3" y="7" width="18" height="10" rx="5"/><path d="M3 10v4M21 10v4"/>',
     avr: '<rect x="1" y="7" width="22" height="10" rx="1.5"/><circle cx="17" cy="12" r="2.5"/><path d="M4 11h6"/>',
     headphones: '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="2" y="14" width="5" height="7" rx="2"/><rect x="17" y="14" width="5" height="7" rx="2"/>',
+    airpods: '<path d="M10 7v12.5a1.5 1.5 0 0 1-3 0v-9.04A3.5 3.5 0 1 1 10 7z"/><path d="M14 7v12.5a1.5 1.5 0 0 0 3 0v-9.04A3.5 3.5 0 1 0 14 7z"/>',
+    airpodsPro: '<path d="M10.5 9.5v7a1.5 1.5 0 0 1-3 0v-3.1A4 4 0 1 1 10.5 9.5z"/><path d="M13.5 9.5v7a1.5 1.5 0 0 0 3 0v-3.1A4 4 0 1 0 13.5 9.5z"/>',
+    airpodsMax: '<path d="M5.5 12V9.5a6.5 6.5 0 0 1 13 0V12"/><path d="M8.5 8.5q3.5-3 7 0"/><rect x="3" y="12" width="5" height="9" rx="2"/><rect x="16" y="12" width="5" height="9" rx="2"/>',
+    earbuds: '<rect x="3" y="4.5" width="18" height="15" rx="6"/><path d="M3.5 9.5h17"/><path d="M12 14.5h.01"/>',
+    beatsBuds: '<circle cx="10" cy="12" r="7"/><path d="M17 10h2.5a1.5 1.5 0 0 1 0 4H17"/><path d="M8 8v7"/><circle cx="10.5" cy="13" r="2"/>',
+    powerbeats: '<circle cx="9" cy="16" r="5"/><path d="M7.5 13.5v5"/><circle cx="9.5" cy="17" r="1.5"/><path d="M9 11V8.5a5.5 5.5 0 0 1 11 0V14q0 3-2.5 5"/>',
+    beatsHeadphones: '<path d="M3.5 15v-2.5a8.5 8.5 0 0 1 17 0V15"/><circle cx="12" cy="14.5" r="5.5"/><path d="M10 11v6"/><circle cx="12.3" cy="15" r="2"/>',
+    gamingHeadset: '<path d="M4 13v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="12" width="5" height="7" rx="2"/><rect x="17" y="12" width="5" height="7" rx="2"/><path d="M4.5 19v.5a2.5 2.5 0 0 0 2.5 2.5h3"/>',
+    smartGlasses: '<rect x="2" y="10" width="8" height="6" rx="2.5"/><rect x="14" y="10" width="8" height="6" rx="2.5"/><path d="M10 12q2-1.5 4 0M2 11 3 7M22 11l-1-4"/>',
     tv: '<rect x="2" y="4" width="20" height="13" rx="1.5"/><path d="M8 21l1.5-4h5l1.5 4"/>',
     playstation: '<path d="M8 2q-3 10 0 20h8q3-10 0-20z"/><path d="M12 2v20"/>',
     xbox: '<rect x="6" y="2" width="12" height="20" rx="1.5"/><circle cx="12" cy="5.5" r="1.5"/>',
@@ -964,6 +974,44 @@ class GalaxyTheme {
     roundWatch: '<circle cx="12" cy="12" r="6"/><path d="M9 6.8 9.5 2h5l.5 4.8M9 17.2l.5 4.8h5l.5-4.8"/>',
     car: '<path d="M3 17v-5l2-5h14l2 5v5z"/><path d="M3 17v3h3v-3M18 17v3h3v-3M3 12h18"/><path d="M7 14.5h.01M17 14.5h.01"/>',
   };
+
+  // First match wins, so each model sits above the family that would also match it
+  static WEARABLE_ICONS = [
+    ["airpodsMax", /airpods ?max/],
+    ["airpodsPro", /airpods ?pro/],
+    ["airpods", /airpods|earpods/],
+    ["powerbeats", /powerbeats/],
+    ["beatsBuds", /beats.*(buds|fit|flex)|beats ?x\b/],
+    ["portableSpeaker", /beats pill/],
+    ["beatsHeadphones", /beats/],
+    ["gamingHeadset", /headset|arctis|hyperx|kraken|blackshark|barracuda|astro a\d|virtuoso|turtle ?beach|g pro x/],
+    ["smartGlasses", /ray-?ban|glasses|frames/],
+    ["earbuds", /buds|earphone|\bwf-|\btws\b|true wireless|jabra elite|nothing ear|liberty|freebuds|airdots/],
+    ["headphones", /headphone|\bwh-|quietcomfort|\bqc ?\d|momentum|nc ?700|life q|space one/],
+  ];
+
+  wearableIconKey(name) {
+    const text = name.toLowerCase().replace(/_/g, " ");
+    return GalaxyTheme.WEARABLE_ICONS.find(([, pattern]) => pattern.test(text))?.[0] || null;
+  }
+
+  // The output this computer plays through (AirPods, a Bluetooth speaker...), known only by its name
+  outputIconKey(output) {
+    const key = this.wearableIconKey(output.name);
+    if (key) return key;
+    if (output.terminalType === "headphones") return "headphones";
+    if (output.transportType === "built_in") return null;
+    return this.deviceIconKey({ name: output.name, brandDisplayName: output.name });
+  }
+
+  // Drawn over Spotify's glyph rather than in place of it, so React can still swap its own icon underneath
+  paintDeviceIcon(svg, key) {
+    const glyph = svg.querySelector(":scope > .galaxy-device-glyph");
+    if ((glyph?.dataset.key || null) === (key || null)) return;
+    glyph?.remove();
+    if (!key) return;
+    svg.insertAdjacentHTML("beforeend", `<svg class="galaxy-device-glyph" data-key="${key}" viewBox="0 0 24 24" width="100%" height="100%"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${GalaxyTheme.DEVICE_ICONS[key]}</g></svg>`);
+  }
 
   deviceIconKey(device) {
     const brand = (device.brandDisplayName || "").toLowerCase();
@@ -1011,7 +1059,8 @@ class GalaxyTheme {
     if (is("microsoft") && has("xbox")) return "xbox";
     if (has("soundbar", "sound bar")) return "soundbar";
     if (is("jbl", "ultimate ears", "marshall") || has("soundlink", "boom", "flip", "charge")) return "portableSpeaker";
-    if (has("headphone", "buds", "quietcomfort", "wh-1000")) return "headphones";
+    const wearable = this.wearableIconKey(`${name} ${model}`);
+    if (wearable) return wearable;
 
     return {
       smartphone: "androidPhone",
@@ -1036,9 +1085,10 @@ class GalaxyTheme {
       let queued = false;
       const apply = () => {
         queued = false;
-        const devices = Spicetify.Platform.ConnectAPI?.getState?.()?.devices || [];
+        const state = Spicetify.Platform.ConnectAPI?.getState?.();
+        const devices = state?.devices || [];
+        const output = Spicetify.Platform.AudioOutputDevicesAPI?.getDefaultDevice?.();
         sidebar.querySelectorAll('[data-testid="device-icon"], [data-testid="main-icon"]').forEach((svg) => {
-          const state = Spicetify.Platform.ConnectAPI?.getState?.();
           let device = null;
           for (let row = svg.parentElement, i = 0; row && i < 8 && !device; row = row.parentElement, i++) {
             const text = row.innerText || "";
@@ -1046,11 +1096,14 @@ class GalaxyTheme {
                      (/this computer/i.test(text) ? devices.find((d) => d.isLocal) : null);
           }
           if (!device && svg.dataset.testid === "device-icon") device = state?.activeDevice;
-          const key = device && this.deviceIconKey(device);
-          if (!key || svg.dataset.galaxyIcon === key) return;
-          svg.dataset.galaxyIcon = key;
-          svg.setAttribute("viewBox", "0 0 24 24");
-          svg.innerHTML = `<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${GalaxyTheme.DEVICE_ICONS[key]}</g>`;
+          // Spotify titles this computer after its output when that's AirPods and the like, so the icon follows
+          this.paintDeviceIcon(svg, (device?.isLocal && output && this.outputIconKey(output)) || (device && this.deviceIconKey(device)));
+        });
+        const outputs = Spicetify.Platform.AudioOutputDevicesAPI?.getDevices?.() || [];
+        sidebar.querySelectorAll('[data-testid="system-audio-output-icon"]').forEach((svg) => {
+          const id = svg.closest('[aria-labelledby^="listrow-title-system-audio-output-"]')?.getAttribute("aria-labelledby").slice(34);
+          const output = outputs.find((o) => o.id === id);
+          this.paintDeviceIcon(svg, output && this.outputIconKey(output));
         });
       };
       new MutationObserver(() => {
@@ -1058,6 +1111,32 @@ class GalaxyTheme {
         queued = true;
         requestAnimationFrame(apply);
       }).observe(sidebar, { childList: true, subtree: true });
+      apply();
+    });
+  }
+
+  // The playbar's connect button shows the remote device, or this computer's output (AirPods etc.) when local
+  setupPlaybarDeviceIcon() {
+    const outputs = Spicetify.Platform.AudioOutputDevicesAPI;
+    let queued = false;
+    const apply = () => {
+      queued = false;
+      const svg = document.querySelector('button[aria-describedby="connect-message-nudge"] svg');
+      if (!svg) return;
+      const active = Spicetify.Platform.ConnectAPI?.getState?.()?.activeDevice;
+      const output = outputs?.getDefaultDevice?.();
+      this.paintDeviceIcon(svg, active && !active.isLocal ? this.deviceIconKey(active) : output && this.outputIconKey(output));
+    };
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(apply);
+    };
+    // Switching between two headphones or two speakers leaves Spotify's icon as it was, so listen for the change itself
+    outputs?.getEvents?.().addListener("deviceConnected", schedule);
+    Spicetify.Platform.ConnectAPI?.getEvents?.().addListener("update", schedule);
+    this.waitForElement(['[data-testid="now-playing-bar"]'], ([bar]) => {
+      new MutationObserver(schedule).observe(bar, { childList: true, subtree: true });
       apply();
     });
   }
