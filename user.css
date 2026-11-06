@@ -687,6 +687,13 @@ HIDE BACKGROUNDS
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
+/* The expanded library is laid over the main view rather than replacing it, so through the glass the page showed
+   (lyrics, a search's sticky chips) and its own background doubled the tint from where it starts. Hiding it also
+   skips rendering it, which matters when it's the lyrics page */
+.Root > div:has(> #Desktop_LeftSidebar_Id.eaQK5Z8sUjCmDnJEf5Kk) > #main-view {
+    visibility: hidden;
+    content-visibility: hidden;
+}
 .Root__right-sidebar-peek aside > div > div:first-child:has(+ [data-overlayscrollbars-initialize]) {
     box-shadow: none !important;
     background: linear-gradient(to bottom, rgba(12, 12, 16, 0.45), rgba(12, 12, 16, 0)) !important;
