@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 (2026-11-08)
+
+### Fixes
+
+- The whole window no longer flickers or glitches when the cover reel on a playlist or artist page changes photo. The animated gradient was using more than half of the memory Spotify keeps for drawing the window, so each colour change ran it out and parts of the window went missing for a moment. It now takes a fraction of that and looks the same
+
 ## 1.2.0 (2026-11-07)
 
 ### Fixes
