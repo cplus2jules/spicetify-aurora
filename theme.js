@@ -89,14 +89,46 @@ class GalaxyTheme {
        blurLayers += `<div class="gradual-blur-layer gradual-blur-layer-${i}"></div>`;
     }
     
+    const blobs = '<canvas width="256" height="256"></canvas>'.repeat(4);
     this.bgContainer.innerHTML = `
         <div class="bg-image-container"><img class="bg-main-image"></div>
-        <div class="bg-cover-gradient is-front"><span></span><span></span><span></span><span></span></div>
-        <div class="bg-cover-gradient"><span></span><span></span><span></span><span></span></div>
+        <div class="bg-cover-gradient is-front">${blobs}</div>
+        <div class="bg-cover-gradient">${blobs}</div>
         <div class="gradual-blur-container">${blurLayers}</div>
     `;
     this.bgImage = this.bgContainer.querySelector(".bg-main-image");
     document.body.prepend(this.bgContainer);
+    // Each copy holds its own colours, so the one fading out doesn't take on the new ones
+    const start = getComputedStyle(this.bgContainer);
+    for (const copy of this.bgContainer.querySelectorAll(".bg-cover-gradient")) {
+      copy.style.setProperty("--galaxy-cover-base", start.getPropertyValue("--galaxy-cover-base"));
+      copy.style.setProperty("--galaxy-cover-light", start.getPropertyValue("--galaxy-cover-light"));
+      // A lost GPU context comes back with blank canvases
+      for (const canvas of copy.children) canvas.addEventListener("contextrestored", () => this.paintBlobs(copy));
+      this.paintBlobs(copy);
+    }
+  }
+
+  // The blobs are drawn small and the GPU scales them up. As CSS gradients each was rasterised at the biggest
+  // scale its drift reaches, around 3300px square on a retina screen, and the eight took more than half of
+  // Chromium's 512MB tile budget. A fade showed both copies at once and tipped it over, so the whole window
+  // flickered with missing tiles every time the cover reel changed photo
+  paintBlobs(copy) {
+    for (const canvas of copy.children) {
+      const ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
+      const r = canvas.width / 2;
+      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const falloff = ctx.createRadialGradient(r, r, 0, r, r, r);
+      falloff.addColorStop(0, "#000");
+      falloff.addColorStop(1, "transparent");
+      ctx.fillStyle = falloff;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Each blob's colour lives in user.css, and takes the falloff's alpha
+      ctx.globalCompositeOperation = "source-in";
+      ctx.fillStyle = getComputedStyle(canvas).color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
   }
 
   // The next colours go on the hidden copy of the gradient, which fades in over the shown one. Only one fade runs at
@@ -107,9 +139,11 @@ class GalaxyTheme {
     const [front, back] = [...this.bgContainer.querySelectorAll(".bg-cover-gradient")].sort((a) => (a.classList.contains("is-front") ? -1 : 1));
     const base = style.getPropertyValue("--galaxy-cover-base");
     const light = style.getPropertyValue("--galaxy-cover-light");
+    if (!base && !light) return;
     if (base === front.style.getPropertyValue("--galaxy-cover-base") && light === front.style.getPropertyValue("--galaxy-cover-light")) return;
     if (base) back.style.setProperty("--galaxy-cover-base", base);
     if (light) back.style.setProperty("--galaxy-cover-light", light);
+    this.paintBlobs(back);
     front.classList.remove("is-front");
     back.classList.add("is-front");
     this.gradientFade = setTimeout(() => {

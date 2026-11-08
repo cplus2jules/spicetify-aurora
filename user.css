@@ -1479,40 +1479,41 @@ img.bg-main-image {
     transition: opacity 1.2s ease;
 }
 /* Everything is glass over these, so any step redraws the whole window. They're too soft for 60fps to show, so all
-   four step together at 10fps: same duration, steps of 100ms, and delays in multiples of that */
-.bg-cover-gradient span {
+   four step together at 10fps: same duration, steps of 100ms, and delays in multiples of that.
+   They're 256px canvases that theme.js paints with a radial falloff in each one's color. Drawn as CSS gradients,
+   Chromium rasterised each at full size times the drift's biggest scale, which ran it out of tile memory */
+.bg-cover-gradient canvas {
     position: absolute;
     width: 42.5vmax;
     height: 42.5vmax;
-    border-radius: 50%;
     will-change: transform;
     animation: galaxy-drift 42s steps(140) infinite alternate;
 }
-html:not(.galaxy-playing) .bg-cover-gradient span {
+html:not(.galaxy-playing) .bg-cover-gradient canvas {
     animation-play-state: paused;
 }
-.bg-cover-gradient span:nth-child(1) {
+.bg-cover-gradient canvas:nth-child(1) {
     top: -30%;
     left: -20%;
-    background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-light) calc(l + 0.12) c h / 0.9), transparent);
+    color: oklch(from var(--galaxy-cover-light) calc(l + 0.12) c h / 0.9);
 }
-.bg-cover-gradient span:nth-child(2) {
+.bg-cover-gradient canvas:nth-child(2) {
     top: -10%;
     right: -30%;
-    background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-base) calc(l + 0.1) calc(c + 0.04) calc(h + 40) / 0.85), transparent);
+    color: oklch(from var(--galaxy-cover-base) calc(l + 0.1) calc(c + 0.04) calc(h + 40) / 0.85);
     animation-direction: alternate-reverse;
     animation-delay: -9s;
 }
-.bg-cover-gradient span:nth-child(3) {
+.bg-cover-gradient canvas:nth-child(3) {
     bottom: -40%;
     left: 10%;
-    background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-light) l c calc(h - 35) / 0.7), transparent);
+    color: oklch(from var(--galaxy-cover-light) l c calc(h - 35) / 0.7);
     animation-delay: -21s;
 }
-.bg-cover-gradient span:nth-child(4) {
+.bg-cover-gradient canvas:nth-child(4) {
     bottom: -30%;
     right: -10%;
-    background: radial-gradient(closest-side, oklch(from var(--galaxy-cover-base) calc(l + 0.18) c h / 0.6), transparent);
+    color: oklch(from var(--galaxy-cover-base) calc(l + 0.18) c h / 0.6);
     animation-direction: alternate-reverse;
     animation-delay: -33s;
 }
@@ -1523,7 +1524,7 @@ html:not(.galaxy-playing) .bg-cover-gradient span {
     100% { transform: translate(6vw, -10vh) scale(2.2) rotate(20deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-    .bg-cover-gradient span {
+    .bg-cover-gradient canvas {
         transform: scale(2);
     }
 }
@@ -1531,7 +1532,7 @@ html:not(.galaxy-playing) .bg-cover-gradient span {
     display: none;
 }
 @media (prefers-reduced-motion: reduce) {
-    .bg-cover-gradient span {
+    .bg-cover-gradient canvas {
         animation: none;
     }
 }
